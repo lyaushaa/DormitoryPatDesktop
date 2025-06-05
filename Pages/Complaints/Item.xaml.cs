@@ -1,0 +1,184 @@
+﻿using DormitoryPATDesktop.Context;
+using DormitoryPATDesktop.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+
+namespace DormitoryPATDesktop.Pages.Complaints
+{
+    public partial class Item : UserControl
+    {
+        private readonly ComplaintsContext _context;
+        private List<Models.Complaints> _allComplaints;
+
+        public Item()
+        {
+            InitializeComponent();
+            _context = new ComplaintsContext();
+            _allComplaints = new List<Models.Complaints>(); // Инициализация пустым списком            
+            ComplaintsDataGrid.BeginningEdit += (s, e) => e.Cancel = true;
+            LoadComplaints();
+        }
+
+        private void LoadComplaints()
+        {
+            try
+            {
+                _allComplaints = _context.Complaints
+                    .Include(c => c.TelegramAuth)
+                    .Include(c => c.Reviewer)
+                    .ToList() ?? new List<Models.Complaints>(); // Гарантируем, что не будет null
+
+                ApplyFiltersAndSort();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке жалоб: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                _allComplaints = new List<Models.Complaints>(); // Инициализируем пустым списком при ошибке
+                ApplyFiltersAndSort();
+            }
+        }
+
+        private void ApplyFiltersAndSort()
+        {
+            try
+            {
+                // Проверяем, что _allComplaints инициализирован
+                if (_allComplaints == null)
+                {
+                    _allComplaints = new List<Models.Complaints>();
+                }
+
+                // Проверяем инициализацию ComplaintsDataGrid
+                if (ComplaintsDataGrid == null)
+                {
+                    return; // Выходим, если DataGrid еще не готов
+                }
+
+                IQueryable<Models.Complaints> filteredComplaints = _allComplaints.AsQueryable();
+
+                // Применяем фильтр по статусу
+                if (StatusFilterComboBox.SelectedIndex > 0 &&
+                    StatusFilterComboBox.SelectedItem is ComboBoxItem selectedStatus)
+                {
+                    var statusValue = selectedStatus.Content.ToString() switch
+                    {
+                        "Создана" => ComplaintStatus.Создана,
+                        "В обработке" => ComplaintStatus.В_обработке,
+                        "Завершена" => ComplaintStatus.Завершена,
+                        "Отклонена" => ComplaintStatus.Отклонена,
+                        _ => (ComplaintStatus?)null
+                    };
+
+                    if (statusValue.HasValue)
+                    {
+                        filteredComplaints = filteredComplaints.Where(c => c.Status == statusValue.Value);
+                    }
+                }
+
+                // Применяем поиск по тексту
+                if (!string.IsNullOrWhiteSpace(SearchTextBox.Text))
+                {
+                    var searchText = SearchTextBox.Text.ToLower();
+                    filteredComplaints = filteredComplaints.Where(c =>
+                        c.ComplaintText != null &&
+                        c.ComplaintText.ToLower().Contains(searchText));
+                }
+
+                // Сортируем: завершенные и отклоненные в конце
+                var result = filteredComplaints
+                    .OrderByDescending(c =>
+                        c.Status == ComplaintStatus.Завершена ||
+                        c.Status == ComplaintStatus.Отклонена ? 0 : 1)
+                    .ThenByDescending(c => c.LastStatusChange)
+                    .ToList();
+
+                ComplaintsDataGrid.ItemsSource = result;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при фильтрации жалоб: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                ComplaintsDataGrid.ItemsSource = new List<Models.Complaints>();
+            }
+        }
+
+        private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyFiltersAndSort();
+        }
+
+        private void StatusFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFiltersAndSort();
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (((FrameworkElement)sender).DataContext is Models.Complaints complaintToDelete)
+            {
+                var confirmResult = MessageBox.Show(
+                    $"Вы уверены, что хотите удалить жалобу №{complaintToDelete.ComplaintId}?",
+                    "Подтверждение удаления",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+
+                if (confirmResult == MessageBoxResult.Yes)
+                {
+                    try
+                    {
+                        using (var deleteContext = new ComplaintsContext())
+                        {
+                            var complaint = deleteContext.Complaints
+                                .FirstOrDefault(c => c.ComplaintId == complaintToDelete.ComplaintId);
+
+                            if (complaint != null)
+                            {
+                                deleteContext.Complaints.Remove(complaint);
+                                deleteContext.SaveChanges();
+                                LoadComplaints();
+                                MessageBox.Show(
+                                    $"Жалоба №{complaintToDelete.ComplaintId} успешно удалена.",
+                                    "Успех",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Information);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            $"Ошибка при удалении жалобы: {ex.Message}",
+                            "Ошибка",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadComplaints();
+        }
+
+        private void ComplaintsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ComplaintsDataGrid.SelectedItem is Models.Complaints selectedComplaint)
+            {
+                OpenComplaintProcessingPage(selectedComplaint);
+            }
+        }
+
+        private void OpenComplaintProcessingPage(Models.Complaints complaint)
+        {
+            var processingPage = new Add(complaint);
+            MainWindow.init.OpenPages(processingPage);
+        }
+    }
+}

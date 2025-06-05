@@ -33,7 +33,6 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                 txtFIO.Text = _employee.FIO;
                 txtPhone.Text = _employee.PhoneNumber;
                 txtLogin.Text = _employee.Login;
-                txtTelegramId.Text = _employee.TelegramId?.ToString() ?? "";
 
                 foreach (ComboBoxItem item in cmbRole.Items)
                 {
@@ -108,7 +107,6 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                             PhoneNumber = txtPhone.Text,
                             Login = txtLogin.Text,
                             Password = HashPassword(_currentPassword),
-                            TelegramId = long.TryParse(txtTelegramId.Text, out var id) ? id : (long?)null,
                             EmployeeRole = EmployeeRole.Мастер
                         };
                         context.Employees.Add(employeeToSave);
@@ -133,16 +131,13 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                         {
                             employeeToSave.Password = HashPassword(_currentPassword);
                         }
-
-                        employeeToSave.TelegramId = long.TryParse(txtTelegramId.Text, out var telegramId) ? telegramId : (long?)null;
-
+                        
                         if (cmbRole.SelectedItem is ComboBoxItem selectedRole)
                         {
                             employeeToSave.EmployeeRole = selectedRole.Content.ToString() switch
                             {
                                 "Мастер" => EmployeeRole.Мастер,
                                 "Воспитатель" => EmployeeRole.Воспитатель,
-                                "Дежурный воспитатель" => EmployeeRole.Дежурный_воспитатель,
                                 "Заведующий общежитием" => EmployeeRole.Заведующий_общежитием,
                                 "Администратор" => EmployeeRole.Администратор,
                                 _ => employeeToSave.EmployeeRole

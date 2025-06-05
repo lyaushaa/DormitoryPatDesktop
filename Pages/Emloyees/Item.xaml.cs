@@ -64,7 +64,6 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                 {
                     "Мастер" => EmployeeRole.Мастер,
                     "Воспитатель" => EmployeeRole.Воспитатель,
-                    "Дежурный воспитатель" => EmployeeRole.Дежурный_воспитатель,
                     "Заведующий общежитием" => EmployeeRole.Заведующий_общежитием,
                     "Администратор" => EmployeeRole.Администратор,
                     _ => (EmployeeRole?)null
@@ -75,13 +74,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                     filtered = filtered.Where(e => e.EmployeeRole == role.Value);
                 }
             }
-
-            // Фильтр по наличию Telegram
-            if (chkHasTelegram.IsChecked == true)
-            {
-                filtered = filtered.Where(e => e.TelegramId.HasValue);
-            }
-
+            
             // Поиск
             if (!string.IsNullOrWhiteSpace(SearchTextBox.Text))
             {
@@ -89,8 +82,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                 filtered = filtered.Where(e =>
                     e.FIO.ToLower().Contains(searchText) ||
                     e.PhoneNumber.Contains(searchText) ||
-                    e.Login.ToLower().Contains(searchText) ||
-                    e.TelegramId.ToString().Contains(searchText));
+                    e.Login.ToLower().Contains(searchText));
             }
 
             EmployeesDataGrid.ItemsSource = filtered.ToList();

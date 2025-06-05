@@ -51,7 +51,6 @@ BorderThickness="1">
                         <ComboBoxItem Content="Все должности" IsSelected="True"/>
                         <ComboBoxItem Content="Мастер"/>
                         <ComboBoxItem Content="Воспитатель"/>
-                        <ComboBoxItem Content="Дежурный воспитатель"/>
                         <ComboBoxItem Content="Заведующий общежитием"/>
                         <ComboBoxItem Content="Администратор"/>
                         <ComboBox.Resources>
@@ -96,14 +95,7 @@ BorderThickness="1">
                                 </Setter>
                             </Style>
                         </ComboBox.Resources>
-                    </ComboBox>
-                    <CheckBox x:Name="chkHasTelegram" 
-                          Content="Только с Telegram" 
-                          Margin="10,0,0,0"
-                          VerticalAlignment="Center" 
-                          Checked="FilterCheckBox_Changed" 
-                          Unchecked="FilterCheckBox_Changed"
-                          FontSize="14"/>
+                    </ComboBox>                    
                     <Button Content="Обновить" 
                         Click="RefreshButton_Click" 
                         Margin="10,0,0,0"
@@ -232,17 +224,6 @@ BorderThickness="1">
                     <DataGridTextColumn Header="Логин" 
                                    Binding="{Binding Login}" 
                                    MinWidth="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="TextAlignment" Value="Center"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="Padding" Value="5"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Telegram ID" 
-                                   Binding="{Binding TelegramId}" 
-                                   Width="120">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextAlignment" Value="Center"/>

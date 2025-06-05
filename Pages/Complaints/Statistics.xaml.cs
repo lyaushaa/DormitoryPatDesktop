@@ -2,25 +2,12 @@
 using DormitoryPATDesktop.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DormitoryPATDesktop.Pages.Complaints
 {
-    /// <summary>
-    /// Логика взаимодействия для Statistics.xaml
-    /// </summary>
     public partial class Statistics : UserControl
     {
         private readonly ComplaintsContext _context;
@@ -119,7 +106,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
             txtAvgResolutionTime.Text = $"Среднее время решения: {avgResolutionDays:F1} дней";
 
             // Дополнительно
-            int anonymous = complaints.Count(c => !c.TelegramId.HasValue || c.TelegramId == 0);
+            int anonymous = complaints.Count(c => !c.StudentId.HasValue || c.StudentId == 0);
             int commented = complaints.Count(c => !string.IsNullOrEmpty(c.Comment));
             double days = (_endDate - _startDate).TotalDays + 1;
             double avgDaily = total / (days > 0 ? days : 1);

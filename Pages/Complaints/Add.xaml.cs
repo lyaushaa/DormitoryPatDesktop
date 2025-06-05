@@ -13,6 +13,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
         private readonly Models.Complaints _complaint;
         private readonly bool _isNewComplaint;
         private readonly EmployeesContext _employeesContext = new EmployeesContext();
+        private readonly StudentsContext _studentsContext = new StudentsContext();
 
         public string TitleName => _isNewComplaint ? "Добавление новой жалобы" : "Редактирование жалобы";
 
@@ -54,8 +55,12 @@ namespace DormitoryPATDesktop.Pages.Complaints
         {
             if (!_isNewComplaint)
             {
-                txtComplainer.Text = _complaint.TelegramId.HasValue ?
-                    $"Telegram ID: {_complaint.TelegramId}" : "Анонимно";
+                // Отображаем ФИО студента или "Анонимно"
+                var student = _complaint.StudentId.HasValue
+                    ? _studentsContext.Students.FirstOrDefault(s => s.StudentId == _complaint.StudentId)
+                    : null;
+                txtComplainer.Text = student?.FIO ?? "Анонимно";
+                txtComplainer.IsReadOnly = true; // Только для чтения при редактировании
 
                 txtComplaintText.Text = _complaint.ComplaintText;
                 txtCreationDate.Text = _complaint.SubmissionDate.ToString("g");
@@ -81,7 +86,6 @@ namespace DormitoryPATDesktop.Pages.Complaints
         {
             var employees = _employeesContext.Employees
                 .Where(e => e.EmployeeRole == Models.EmployeeRole.Воспитатель ||
-                           e.EmployeeRole == Models.EmployeeRole.Дежурный_воспитатель ||
                            e.EmployeeRole == Models.EmployeeRole.Заведующий_общежитием)
                 .ToList();
 
@@ -93,7 +97,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
                 var reviewer = employees.FirstOrDefault(e => e.EmployeeId == _complaint.ReviewedBy);
                 if (reviewer != null)
                 {
-                    cmbProcessor.SelectedItem = reviewer.EmployeeId;
+                    cmbProcessor.SelectedItem = reviewer;
                 }
             }
         }
@@ -117,6 +121,22 @@ namespace DormitoryPATDesktop.Pages.Complaints
                             LastStatusChange = DateTime.Now,
                             Status = Models.ComplaintStatus.Создана
                         };
+
+                        // Проверяем, является ли ввод "анонимно" (без учёта регистра)
+                        string complainerText = txtComplainer.Text.Trim().ToLower();
+                        if (complainerText != "анонимно")
+                        {
+                            var student = _studentsContext.Students
+                                .FirstOrDefault(s => s.FIO.ToLower() == complainerText);
+                            if (student == null)
+                            {
+                                MessageBox.Show("Студент с таким ФИО не найден.", "Ошибка",
+                                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                                return;
+                            }
+                            complaintToSave.StudentId = student.StudentId;
+                        }
+                        // Если "анонимно" или пусто, StudentId остаётся null
                         context.Complaints.Add(complaintToSave);
                     }
                     else
@@ -160,7 +180,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
                         "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     var mainPage = new Main();
-                    mainPage.CurrentModule = "Complaints"; // Устанавливаем нужный модуль
+                    mainPage.CurrentModule = "Complaints";
                     mainPage.LoadModule("Complaints");
                     MainWindow.init.OpenPages(mainPage);
                 }
@@ -181,6 +201,22 @@ namespace DormitoryPATDesktop.Pages.Complaints
                 return false;
             }
 
+            if (_isNewComplaint)
+            {
+                string complainerText = txtComplainer.Text.Trim().ToLower();
+                if (!string.IsNullOrWhiteSpace(complainerText) && complainerText != "анонимно")
+                {
+                    var student = _studentsContext.Students
+                        .FirstOrDefault(s => s.FIO.ToLower() == complainerText);
+                    if (student == null)
+                    {
+                        MessageBox.Show("Студент с таким ФИО не найден.", "Ошибка",
+                            MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return false;
+                    }
+                }
+            }
+
             if (cmbStatus.SelectedItem == null)
             {
                 MessageBox.Show("Выберите статус жалобы.", "Ошибка",
@@ -194,7 +230,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             var mainPage = new Main();
-            mainPage.CurrentModule = "Complaints"; // Устанавливаем нужный модуль
+            mainPage.CurrentModule = "Complaints";
             mainPage.LoadModule("Complaints");
             MainWindow.init.OpenPages(mainPage);
         }

@@ -8,37 +8,26 @@ namespace DormitoryPATDesktop.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ComplaintId { get; set; }
-
-        [ForeignKey("TelegramAuth")]
-        public long? TelegramId { get; set; }
-
+        [ForeignKey("Student")]
+        public long? StudentId { get; set; }
         [Required]
         public string ComplaintText { get; set; }
-
         [ForeignKey("Reviewer")]
         public long? ReviewedBy { get; set; }
-
         [Required]
         [Column(TypeName = "ENUM('Создана', 'В_обработке', 'Завершена', 'Отклонена')")]
         public ComplaintStatus Status { get; set; }
-
         public string? Comment { get; set; }
-
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime SubmissionDate { get; set; }
-
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime LastStatusChange { get; set; }
-
         // Навигационные свойства
-        public TelegramAuth TelegramAuth { get; set; }
-        public Employees Reviewer { get; set; }
-
+        public Students? Student { get; set; }
+        public Employees? Reviewer { get; set; }
         // Свойства только для отображения
         [NotMapped]
-        public string TelegramIdDisplay => TelegramId.HasValue && TelegramId.Value != 0
-            ? TelegramId.Value.ToString()
-            : "Анонимно";
+        public string StudentIdDisplay => Student != null && Student.FIO != null ? Student.FIO : "Анонимно";
 
         [NotMapped]
         public string StatusDisplay => Status switch
@@ -55,13 +44,10 @@ namespace DormitoryPATDesktop.Models
     {
         [Display(Name = "Создана")]
         Создана,
-
         [Display(Name = "В_обработке")]
         В_обработке,
-
         [Display(Name = "Завершена")]
         Завершена,
-
         [Display(Name = "Отклонена")]
         Отклонена
     }

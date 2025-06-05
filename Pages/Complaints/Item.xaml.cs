@@ -12,14 +12,13 @@ namespace DormitoryPATDesktop.Pages.Complaints
 {
     public partial class Item : UserControl
     {
-        private readonly ComplaintsContext _context;
+        private readonly ComplaintsContext _context = new ComplaintsContext();
         private List<Models.Complaints> _allComplaints;
 
         public Item()
         {
             InitializeComponent();
-            _context = new ComplaintsContext();
-            _allComplaints = new List<Models.Complaints>(); // Инициализация пустым списком            
+            _allComplaints = new List<Models.Complaints>();
             ComplaintsDataGrid.BeginningEdit += (s, e) => e.Cancel = true;
             LoadComplaints();
         }
@@ -29,9 +28,9 @@ namespace DormitoryPATDesktop.Pages.Complaints
             try
             {
                 _allComplaints = _context.Complaints
-                    .Include(c => c.TelegramAuth)
+                    .Include(c => c.Student) // Включаем Student, обрабатываем null
                     .Include(c => c.Reviewer)
-                    .ToList() ?? new List<Models.Complaints>(); // Гарантируем, что не будет null
+                    .ToList() ?? new List<Models.Complaints>();
 
                 ApplyFiltersAndSort();
             }
@@ -39,7 +38,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
             {
                 MessageBox.Show($"Ошибка при загрузке жалоб: {ex.Message}", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Error);
-                _allComplaints = new List<Models.Complaints>(); // Инициализируем пустым списком при ошибке
+                _allComplaints = new List<Models.Complaints>();
                 ApplyFiltersAndSort();
             }
         }
@@ -48,16 +47,14 @@ namespace DormitoryPATDesktop.Pages.Complaints
         {
             try
             {
-                // Проверяем, что _allComplaints инициализирован
                 if (_allComplaints == null)
                 {
                     _allComplaints = new List<Models.Complaints>();
                 }
 
-                // Проверяем инициализацию ComplaintsDataGrid
                 if (ComplaintsDataGrid == null)
                 {
-                    return; // Выходим, если DataGrid еще не готов
+                    return;
                 }
 
                 IQueryable<Models.Complaints> filteredComplaints = _allComplaints.AsQueryable();
@@ -86,8 +83,9 @@ namespace DormitoryPATDesktop.Pages.Complaints
                 {
                     var searchText = SearchTextBox.Text.ToLower();
                     filteredComplaints = filteredComplaints.Where(c =>
-                        c.ComplaintText != null &&
-                        c.ComplaintText.ToLower().Contains(searchText));
+                        (c.ComplaintText != null && c.ComplaintText.ToLower().Contains(searchText)) ||
+                        (c.Student != null && c.Student.FIO != null && c.Student.FIO.ToLower().Contains(searchText)) ||
+                        (c.Comment != null && c.Comment.ToLower().Contains(searchText)));
                 }
 
                 // Сортируем: завершенные и отклоненные в конце

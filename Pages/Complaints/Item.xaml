@@ -6,10 +6,10 @@
              xmlns:local="clr-namespace:DormitoryPATDesktop.Pages.Complaints"
              mc:Ignorable="d">
     <Border Grid.Column="1" 
-        Margin="0,0,0,0" 
-        Background="#F5F6F5" 
-        CornerRadius="8" 
-        BorderThickness="1">    
+            Margin="0,0,0,0" 
+            Background="#F5F6F5" 
+            CornerRadius="8" 
+            BorderThickness="1">
         <Grid Margin="15">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -155,16 +155,16 @@
                         <Setter Property="BorderThickness" Value="0,0,0,1"/>
                         <Setter Property="BorderBrush" Value="#F0F0F0"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Status}" Value="Создана">
+                            <DataTrigger Binding="{Binding StatusDisplay}" Value="Создана">
                                 <Setter Property="Background" Value="#FFF9C4"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Status}" Value="В_обработке">
+                            <DataTrigger Binding="{Binding StatusDisplay}" Value="В обработке">
                                 <Setter Property="Background" Value="#BBDEFB"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Status}" Value="Завершена">
+                            <DataTrigger Binding="{Binding StatusDisplay}" Value="Завершена">
                                 <Setter Property="Background" Value="#C8E6C9"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding Status}" Value="Отклонена">
+                            <DataTrigger Binding="{Binding StatusDisplay}" Value="Отклонена">
                                 <Setter Property="Background" Value="#FFCDD2"/>
                             </DataTrigger>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -202,9 +202,9 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Telegram ID" 
-                                   Binding="{Binding TelegramIdDisplay}" 
-                                   Width="120">
+                    <DataGridTextColumn Header="Студент" 
+                                   Binding="{Binding StudentIdDisplay}" 
+                                   Width="220">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextAlignment" Value="Center"/>

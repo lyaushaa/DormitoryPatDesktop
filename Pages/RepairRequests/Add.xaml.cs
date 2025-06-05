@@ -13,6 +13,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
         private readonly Models.RepairRequests _request;
         private readonly bool _isNewRequest;
         private readonly EmployeesContext _employeesContext = new EmployeesContext();
+        private readonly StudentsContext _studentsContext = new StudentsContext();
 
         public string TitleName => _isNewRequest ? "Добавление новой заявки" : "Редактирование заявки";
 
@@ -31,7 +32,12 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
         {
             if (!_isNewRequest)
             {
-                txtRequester.Text = _request.TelegramId.ToString();
+                // Отображаем ФИО студента
+                var student = _studentsContext.Students
+                    .FirstOrDefault(s => s.StudentId == _request.StudentId);
+                txtRequester.Text = student?.FIO ?? "Не указан";
+                txtRequester.IsReadOnly = true; // Только для чтения при редактировании
+
                 txtLocation.Text = _request.Location;
                 txtProblemDescription.Text = _request.UserComment;
                 txtCreationDate.Text = _request.RequestDate.ToString("g");
@@ -60,7 +66,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
             }
             else
             {
-                txtRequester.IsReadOnly = false;
+                txtRequester.IsReadOnly = false; // Разрешаем ввод при добавлении
                 txtLocation.IsReadOnly = false;
                 txtProblemDescription.IsReadOnly = false;
                 txtCreationDate.IsReadOnly = false;
@@ -87,7 +93,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                 .ToList();
 
             cmbMaster.ItemsSource = masters;
-            cmbMaster.DisplayMemberPath = "FIO"; // Убедимся, что DisplayMemberPath установлен
+            cmbMaster.DisplayMemberPath = "FIO";
 
             if (!_isNewRequest && _request.MasterId.HasValue)
             {
@@ -98,7 +104,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                 }
                 else
                 {
-                    cmbMaster.SelectedItem = null; // Сбрасываем выбор, если мастер не найден
+                    cmbMaster.SelectedItem = null;
                 }
             }
         }
@@ -111,15 +117,25 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
             {
                 using (var context = new RepairRequestsContext())
                 {
-                    var telegramId = long.TryParse(txtRequester.Text, out var id) ? id : 0;                    
-
                     Models.RepairRequests requestToSave;
+                    long studentId;
 
+                    // Проверяем студента по введённому ФИО
                     if (_isNewRequest)
                     {
+                        var student = _studentsContext.Students
+                            .FirstOrDefault(s => s.FIO.ToLower() == txtRequester.Text.ToLower());
+                        if (student == null)
+                        {
+                            MessageBox.Show("Студент с таким ФИО не найден.", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+                        studentId = student.StudentId;
+
                         requestToSave = new Models.RepairRequests
                         {
-                            TelegramId = (long)(telegramId != 0 ? telegramId : (long?)null),
+                            StudentId = studentId,
                             Location = txtLocation.Text,
                             UserComment = txtProblemDescription.Text,
                             RequestDate = DateTime.Now,
@@ -139,12 +155,21 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                         }
+
+                        // StudentId не меняется при редактировании
+                        studentId = requestToSave.StudentId;
+                        requestToSave.Location = txtLocation.Text;
+                        requestToSave.UserComment = txtProblemDescription.Text;
                     }
 
                     // Общие поля для новой и существующей заявки
                     if (cmbMaster.SelectedItem is Employees selectedMaster)
                     {
                         requestToSave.MasterId = selectedMaster.EmployeeId;
+                    }
+                    else
+                    {
+                        requestToSave.MasterId = null;
                     }
 
                     if (cmbProblemType.SelectedItem is ComboBoxItem selectedProblemType)
@@ -180,7 +205,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                         "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     var mainPage = new Main();
-                    mainPage.CurrentModule = "RepairRequests"; // Устанавливаем нужный модуль
+                    mainPage.CurrentModule = "RepairRequests";
                     mainPage.LoadModule("RepairRequests");
                     MainWindow.init.OpenPages(mainPage);
                 }
@@ -194,6 +219,13 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
 
         private bool ValidateInput()
         {
+            if (string.IsNullOrWhiteSpace(txtRequester.Text))
+            {
+                MessageBox.Show("Введите ФИО студента.", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
             if (string.IsNullOrWhiteSpace(txtLocation.Text))
             {
                 MessageBox.Show("Укажите место ремонта.", "Ошибка",
@@ -228,7 +260,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             var mainPage = new Main();
-            mainPage.CurrentModule = "RepairRequests"; // Устанавливаем нужный модуль
+            mainPage.CurrentModule = "RepairRequests";
             mainPage.LoadModule("RepairRequests");
             MainWindow.init.OpenPages(mainPage);
         }

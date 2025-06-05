@@ -80,13 +80,7 @@
                             Tag="Complaints"
                             x:Name="ComplaintsBtn"/>
 
-                    <Button Content="Дежурный воспитатель" 
-                            Style="{StaticResource MenuButtonStyle}"
-                            Click="ModuleButton_Click"
-                            Tag="DutyEducator"
-                            x:Name="DutyEducatorBtn"/>
-
-                    <Button Content="Студенты" 
+                        <Button Content="Студенты" 
                             Style="{StaticResource MenuButtonStyle}"
                             Click="ModuleButton_Click"
                             Tag="Students"
@@ -103,13 +97,7 @@
                             Click="ModuleButton_Click"
                             Tag="DutySchedule"
                             x:Name="DutyScheduleBtn"/>
-
-                    <Button Content="TelegramAuth" 
-                            Style="{StaticResource MenuButtonStyle}"
-                            Click="ModuleButton_Click"
-                            Tag="TelegramAuth"
-                            x:Name="TelegramAuthBtn"/>                    
-                </StackPanel>
+                    </StackPanel>
                     <Button Content="Выйти" 
         Margin="20,20,0,10" 
         VerticalAlignment="Bottom" 

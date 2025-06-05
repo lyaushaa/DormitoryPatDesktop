@@ -29,7 +29,6 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
             try
             {
                 _allRequests = _context.RepairRequests
-                    .Include(r => r.TelegramAuth)
                     .Include(r => r.Master)
                     .ToList() ?? new List<Models.RepairRequests>();
 

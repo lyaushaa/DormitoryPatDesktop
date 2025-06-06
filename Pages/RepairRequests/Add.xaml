@@ -218,49 +218,51 @@
 
                     <!-- Мастер -->
                     <TextBlock Text="Назначить мастера:" 
-                               Grid.Row="4" Grid.Column="0"
-                               VerticalAlignment="Center" 
-                               Margin="0,0,15,15"
-                               FontSize="14" 
-                               Foreground="#616161"/>
+           Grid.Row="4" Grid.Column="0"
+           VerticalAlignment="Center" 
+           Margin="0,0,15,15"
+           FontSize="14" 
+           Foreground="#616161"/>
                     <ComboBox x:Name="cmbMaster" 
-                              Grid.Row="4" Grid.Column="1"
-                              DisplayMemberPath="FIO" 
-                              Margin="0,0,0,15" 
-                              FontSize="14" 
-                              Padding="8"
-                              >
+          Grid.Row="4" Grid.Column="1"
+          Margin="0,0,0,15" 
+          FontSize="14" 
+          Padding="8">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding FIO}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                         <ComboBox.Resources>
                             <Style TargetType="ComboBox">
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ComboBox">
                                             <Border Background="White" 
-                                                    BorderBrush="#B0B0B0" 
-                                                    BorderThickness="1" 
-                                                    CornerRadius="5">
+                                BorderBrush="#B0B0B0" 
+                                BorderThickness="1" 
+                                CornerRadius="5">
                                                 <Grid>
                                                     <ToggleButton x:Name="ToggleButton" 
-                                                                  BorderThickness="0" 
-                                                                  Background="Transparent"
-                                                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                                                  ClickMode="Press">
-                                                        <ContentPresenter x:Name="ContentSite" 
-                                                                          Content="{TemplateBinding SelectionBoxItem}"
-                                                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                                          HorizontalAlignment="Left"
-                                                                          VerticalAlignment="Center"/>
+                                              BorderThickness="0" 
+                                              Background="Transparent"
+                                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                              ClickMode="Press">
+                                                        <!-- Display the FIO of the selected item -->
+                                                        <TextBlock Text="{Binding SelectedItem.FIO, RelativeSource={RelativeSource AncestorType=ComboBox}, FallbackValue='Выберите мастера'}" 
+                                               Margin="8,0" 
+                                               VerticalAlignment="Center"/>
                                                     </ToggleButton>
                                                     <Popup x:Name="Popup"
-                                                           IsOpen="{TemplateBinding IsDropDownOpen}"
-                                                           Placement="Bottom"
-                                                           AllowsTransparency="True">
+                                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                                       Placement="Bottom"
+                                       AllowsTransparency="True">
                                                         <Border MaxHeight="200" 
-                                                                MinWidth="{TemplateBinding ActualWidth}"
-                                                                Background="White"
-                                                                BorderBrush="#B0B0B0"
-                                                                BorderThickness="1"
-                                                                CornerRadius="5">
+                                            MinWidth="{TemplateBinding ActualWidth}"
+                                            Background="White"
+                                            BorderBrush="#B0B0B0"
+                                            BorderThickness="1"
+                                            CornerRadius="5">
                                                             <ScrollViewer>
                                                                 <ItemsPresenter/>
                                                             </ScrollViewer>

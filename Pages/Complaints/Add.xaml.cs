@@ -90,7 +90,6 @@ namespace DormitoryPATDesktop.Pages.Complaints
                 .ToList();
 
             cmbProcessor.ItemsSource = employees;
-            cmbProcessor.DisplayMemberPath = "FIO";
 
             if (!_isNewComplaint && _complaint.ReviewedBy.HasValue)
             {

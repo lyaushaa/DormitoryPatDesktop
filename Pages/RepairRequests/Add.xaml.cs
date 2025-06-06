@@ -93,7 +93,6 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                 .ToList();
 
             cmbMaster.ItemsSource = masters;
-            cmbMaster.DisplayMemberPath = "FIO";
 
             if (!_isNewRequest && _request.MasterId.HasValue)
             {

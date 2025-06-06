@@ -28,7 +28,6 @@ namespace DormitoryPATDesktop.Models
         [Column(TypeName = "ENUM('Студент', 'Староста_этажа', 'Председатель_общежития')")]
         public StudentRole StudentRole { get; set; }
 
-        [ForeignKey("TelegramAuth")]
         public long? TelegramId { get; set; }
 
         [NotMapped]

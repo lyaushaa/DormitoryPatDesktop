@@ -204,7 +204,7 @@
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Студент" 
                                    Binding="{Binding StudentIdDisplay}" 
-                                   Width="220">
+                                   Width="230">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextAlignment" Value="Center"/>

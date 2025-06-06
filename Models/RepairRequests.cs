@@ -18,7 +18,7 @@ namespace DormitoryPATDesktop.Models
         [Column(TypeName = "ENUM('Электрика', 'Сантехника', 'Мебель')")]
         public ProblemType Problem { get; set; }
         public string? UserComment { get; set; }
-        [ForeignKey("Employees")]
+        [ForeignKey("Master")]
         public long? MasterId { get; set; }
         [Required]
         [Column(TypeName = "ENUM('Создана', 'В_обработке', 'Ожидает_запчастей', 'Завершена', 'Отклонена')")]
@@ -29,7 +29,7 @@ namespace DormitoryPATDesktop.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime LastStatusChange { get; set; }
         // Навигационные свойства
-        public Students Student { get; set; }
+        public Students Students { get; set; }
         public Employees Master { get; set; }
         [NotMapped]
         public string StatusDisplay => Status switch

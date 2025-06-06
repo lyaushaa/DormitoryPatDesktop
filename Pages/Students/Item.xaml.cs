@@ -21,6 +21,7 @@ namespace DormitoryPATDesktop.Pages.Students
             _context = new StudentsContext();
             _allStudents = new List<Models.Students>();
             StudentsDataGrid.BeginningEdit += (s, e) => e.Cancel = true;
+            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор || Session.CurrentEmployeeRole == EmployeeRole.Заведующий_общежитием) Action_dgtc.Visibility = Visibility.Visible;
             LoadStudents();
         }
 
@@ -139,16 +140,14 @@ namespace DormitoryPATDesktop.Pages.Students
 
         private void StudentsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (StudentsDataGrid.SelectedItem is Models.Students selectedStudents)
+            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор || Session.CurrentEmployeeRole == EmployeeRole.Заведующий_общежитием)
             {
-                OpenStudentsProcessingPage(selectedStudents);
-            }
-        }
-
-        private void OpenStudentsProcessingPage(Models.Students students)
-        {
-            var processingPage = new Add(students);
-            MainWindow.init.OpenPages(processingPage);
+                if (StudentsDataGrid.SelectedItem is Models.Students selectedStudents)
+                {
+                    var processingPage = new Add(selectedStudents);
+                    MainWindow.init.OpenPages(processingPage);
+                }
+            }            
         }
     }
 }

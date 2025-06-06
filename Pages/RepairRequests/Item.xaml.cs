@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Telegram.Bot.Requests.Abstractions;
 
 namespace DormitoryPATDesktop.Pages.RepairRequests
 {
@@ -21,6 +22,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
             _context = new RepairRequestsContext();
             _allRequests = new List<Models.RepairRequests>();
             RequestDataGrid.BeginningEdit += (s, e) => e.Cancel = true;
+            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор) Action_dgtc.Visibility = Visibility.Visible;
             LoadRequests();
         }
 
@@ -178,16 +180,14 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
 
         private void RequestDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (RequestDataGrid.SelectedItem is Models.RepairRequests selectedRequest)
+            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
             {
-                OpenRequestProcessingPage(selectedRequest);
-            }
-        }
-
-        private void OpenRequestProcessingPage(Models.RepairRequests request)
-        {
-            var processingPage = new Add(request);
-            MainWindow.init.OpenPages(processingPage);
+                if (RequestDataGrid.SelectedItem is Models.RepairRequests selectedRequest)
+                {
+                    var processingPage = new Add(selectedRequest);
+                    MainWindow.init.OpenPages(processingPage);
+                }
+            }                
         }
     }
 }

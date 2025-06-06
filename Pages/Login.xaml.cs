@@ -49,6 +49,7 @@ namespace DormitoryPATDesktop.Pages
             Session.CurrentEmployeeRole = employee.EmployeeRole;
 
             MainWindow.init.OpenPages(new Main());
+
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

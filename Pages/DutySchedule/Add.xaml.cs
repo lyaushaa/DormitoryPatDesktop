@@ -111,7 +111,10 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow.init.OpenPages(new Main());
+            var mainPage = new Main();
+            mainPage.CurrentModule = "DutySchedule";
+            mainPage.LoadModule("DutySchedule");
+            MainWindow.init.OpenPages(mainPage);
         }
     }
 }

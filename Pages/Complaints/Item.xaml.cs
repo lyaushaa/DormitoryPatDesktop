@@ -20,6 +20,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
             InitializeComponent();
             _allComplaints = new List<Models.Complaints>();
             ComplaintsDataGrid.BeginningEdit += (s, e) => e.Cancel = true;
+            if(Session.CurrentEmployeeRole == EmployeeRole.Администратор) Action_dgtc.Visibility = Visibility.Visible;
             LoadComplaints();
         }
 
@@ -167,16 +168,14 @@ namespace DormitoryPATDesktop.Pages.Complaints
 
         private void ComplaintsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (ComplaintsDataGrid.SelectedItem is Models.Complaints selectedComplaint)
+            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
             {
-                OpenComplaintProcessingPage(selectedComplaint);
-            }
-        }
-
-        private void OpenComplaintProcessingPage(Models.Complaints complaint)
-        {
-            var processingPage = new Add(complaint);
-            MainWindow.init.OpenPages(processingPage);
+                if (ComplaintsDataGrid.SelectedItem is Models.Complaints selectedComplaint)
+                {
+                    var processingPage = new Add(selectedComplaint);
+                    MainWindow.init.OpenPages(processingPage);
+                }
+            }                
         }
     }
 }

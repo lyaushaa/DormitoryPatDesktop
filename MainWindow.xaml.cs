@@ -22,7 +22,7 @@ namespace DormitoryPATDesktop
         {
             InitializeComponent();
             init = this;
-            OpenPages(new Main());
+            OpenPages(new Login());
         }
 
         public void OpenPages(Page page)

@@ -31,6 +31,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
             _context = new EmployeesContext();
             _allEmployees = new List<Employees>();
             EmployeesDataGrid.BeginningEdit += (s, e) => e.Cancel = true;
+            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор) Action_dgtc.Visibility = Visibility.Visible;
             LoadEmployees();
         }
 
@@ -134,16 +135,14 @@ namespace DormitoryPATDesktop.Pages.Emloyees
 
         private void EmployeesDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (EmployeesDataGrid.SelectedItem is Employees selectedEmployee)
+            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
             {
-                OpenEmployeeProcessingPage(selectedEmployee);
-            }
-        }
-
-        private void OpenEmployeeProcessingPage(Employees employee)
-        {
-            var processingPage = new Add(employee);
-            MainWindow.init.OpenPages(processingPage);
+                if (EmployeesDataGrid.SelectedItem is Employees selectedEmployee)
+                {
+                    var processingPage = new Add(selectedEmployee);
+                    MainWindow.init.OpenPages(processingPage);
+                }
+            }                
         }
     }
 }

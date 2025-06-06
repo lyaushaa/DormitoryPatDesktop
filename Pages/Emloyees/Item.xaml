@@ -232,7 +232,7 @@ BorderThickness="1">
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="Действие" Width="100">
+                    <DataGridTemplateColumn Header="Действие" Width="100" Visibility="Collapsed" x:Name="Action_dgtc">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="Удалить" 

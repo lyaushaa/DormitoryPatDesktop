@@ -222,26 +222,52 @@
                                 CornerRadius="5" 
                                 BorderBrush="#B0B0B0" 
                                 BorderThickness="1">
-                            <PasswordBox x:Name="txtPassword" 
+                            <Grid>
+                                <!-- PasswordBox -->
+                                <PasswordBox x:Name="txtPassword" 
+                                             Padding="8"
+                                             BorderThickness="0"
+                                             FontSize="14"
+                                             VerticalContentAlignment="Center"
+                                             PasswordChanged="txtPassword_PasswordChanged"
+                                             Visibility="Visible">
+                                    <PasswordBox.Resources>
+                                        <Style TargetType="PasswordBox">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="PasswordBox">
+                                                        <Border Background="Transparent" CornerRadius="4">
+                                                            <ScrollViewer x:Name="PART_ContentHost"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </PasswordBox.Resources>
+                                </PasswordBox>
+                                <!-- TextBox for visible password -->
+                                <TextBox x:Name="txtPasswordVisible" 
                                          Padding="8"
                                          BorderThickness="0"
                                          FontSize="14"
                                          VerticalContentAlignment="Center"
-                                         PasswordChanged="txtPassword_PasswordChanged">
-                                <PasswordBox.Resources>
-                                    <Style TargetType="PasswordBox">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="PasswordBox">
-                                                    <Border Background="Transparent" CornerRadius="4">
-                                                        <ScrollViewer x:Name="PART_ContentHost"/>
-                                                    </Border>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </PasswordBox.Resources>
-                            </PasswordBox>
+                                         TextChanged="txtPasswordVisible_TextChanged"
+                                         Visibility="Collapsed">
+                                    <TextBox.Resources>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="TextBox">
+                                                        <Border Background="Transparent" CornerRadius="4">
+                                                            <ScrollViewer x:Name="PART_ContentHost"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </TextBox.Resources>
+                                </TextBox>
+                            </Grid>
                         </Border>
                         <Button x:Name="btnShowPassword" 
                                 Grid.Column="1" 
@@ -283,27 +309,13 @@
                             </Button.Resources>
                         </Button>
                     </Grid>
-                    <Border Grid.Row="4" Grid.Column="1" 
-                            CornerRadius="5" 
-                            BorderBrush="#B0B0B0" 
-                            BorderThickness="1"
-                            Margin="0,0,0,15"
-                            Visibility="Collapsed">
-                        <TextBox x:Name="txtPasswordVisible" 
-                                 Padding="8"
-                                 BorderThickness="0"
-                                 FontSize="14"
-                                 VerticalContentAlignment="Center"
-                                 TextChanged="txtPasswordVisible_TextChanged"/>
-                    </Border>
 
                     <!-- Подсказка для пароля -->
                     <TextBlock Grid.Row="5" Grid.Column="1" 
                                Text="{Binding PasswordHint}"
                                FontSize="12" 
                                Foreground="#9E9E9E" 
-                               Margin="0,-10,0,0"/>                  
-                    
+                               Margin="0,-10,0,0"/>
                 </Grid>
             </Border>
 

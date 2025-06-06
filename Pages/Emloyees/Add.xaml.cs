@@ -14,7 +14,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
         private string _currentPassword = "";
 
         public string TitleName => _isNewEmployee ? "Добавление нового сотрудника" : "Редактирование сотрудника";
-        public string PasswordHint => _isNewEmployee ? "* Пароль будет зашифрован" : "* Пароль нельзя посмотреть, только изменить";
+        public string PasswordHint => _isNewEmployee ? "* Пароль будет зашифрован" : "* Оставьте поле пустым, если не хотите менять пароль";
 
         public Add(Employees employee = null)
         {
@@ -42,6 +42,11 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                         break;
                     }
                 }
+
+                // При редактировании сотрудника пароль не отображается, так как он зашифрован
+                txtPassword.Password = "";
+                txtPasswordVisible.Text = "";
+                _currentPassword = "";
             }
             else
             {
@@ -107,7 +112,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                             PhoneNumber = txtPhone.Text,
                             Login = txtLogin.Text,
                             Password = HashPassword(_currentPassword),
-                            EmployeeRole = EmployeeRole.Мастер
+                            EmployeeRole = EmployeeRole.Мастер // Значение по умолчанию, будет перезаписано ниже
                         };
                         context.Employees.Add(employeeToSave);
                     }
@@ -131,18 +136,18 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                         {
                             employeeToSave.Password = HashPassword(_currentPassword);
                         }
-                        
-                        if (cmbRole.SelectedItem is ComboBoxItem selectedRole)
+                    }
+
+                    if (cmbRole.SelectedItem is ComboBoxItem selectedRole)
+                    {
+                        employeeToSave.EmployeeRole = selectedRole.Content.ToString() switch
                         {
-                            employeeToSave.EmployeeRole = selectedRole.Content.ToString() switch
-                            {
-                                "Мастер" => EmployeeRole.Мастер,
-                                "Воспитатель" => EmployeeRole.Воспитатель,
-                                "Заведующий общежитием" => EmployeeRole.Заведующий_общежитием,
-                                "Администратор" => EmployeeRole.Администратор,
-                                _ => employeeToSave.EmployeeRole
-                            };
-                        }
+                            "Мастер" => EmployeeRole.Мастер,
+                            "Воспитатель" => EmployeeRole.Воспитатель,
+                            "Заведующий общежитием" => EmployeeRole.Заведующий_общежитием,
+                            "Администратор" => EmployeeRole.Администратор,
+                            _ => employeeToSave.EmployeeRole
+                        };
                     }
 
                     context.SaveChanges();

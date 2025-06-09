@@ -91,6 +91,7 @@ namespace DormitoryPATDesktop
                 case "RepairRequests":
                     ContentArea.Content = new Pages.RepairRequests.Item();
                     sttBtn.Visibility = Visibility.Visible;
+                    anlBtn.Visibility = Visibility.Visible;
                     if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
                     {
                         addBackBtn.Content = "Добавить";
@@ -104,6 +105,7 @@ namespace DormitoryPATDesktop
                 case "Complaints":
                     ContentArea.Content = new Pages.Complaints.Item();
                     sttBtn.Visibility = Visibility.Visible;
+                    anlBtn.Visibility = Visibility.Collapsed;
                     if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
                     {
                         addBackBtn.Content = "Добавить";
@@ -116,8 +118,9 @@ namespace DormitoryPATDesktop
                     break;
                 case "Students":
                     ContentArea.Content = new Pages.Students.Item();
-                    sttBtn.Visibility = Visibility.Hidden;
-                    if(Session.CurrentEmployeeRole == EmployeeRole.Администратор || Session.CurrentEmployeeRole == EmployeeRole.Заведующий_общежитием)
+                    sttBtn.Visibility = Visibility.Collapsed;
+                    anlBtn.Visibility = Visibility.Collapsed;
+                    if (Session.CurrentEmployeeRole == EmployeeRole.Администратор || Session.CurrentEmployeeRole == EmployeeRole.Заведующий_общежитием)
                     {
                         addBackBtn.Content = "Добавить";
                         addBackBtn.Visibility = Visibility.Visible;
@@ -129,7 +132,8 @@ namespace DormitoryPATDesktop
                     break;
                 case "Employees":
                     ContentArea.Content = new Pages.Emloyees.Item();
-                    sttBtn.Visibility = Visibility.Hidden;
+                    sttBtn.Visibility = Visibility.Collapsed;
+                    anlBtn.Visibility = Visibility.Collapsed;
                     if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
                     {
                         addBackBtn.Content = "Добавить";
@@ -142,12 +146,14 @@ namespace DormitoryPATDesktop
                     break;
                 case "DutySchedule":
                     ContentArea.Content = new Pages.DutySchedule.Item();
-                    sttBtn.Visibility = Visibility.Hidden;
+                    sttBtn.Visibility = Visibility.Collapsed;
+                    anlBtn.Visibility = Visibility.Collapsed;
                     addBackBtn.Content = "Добавить";
                     break;
                 default:
-                    sttBtn.Visibility = Visibility.Hidden;
-                    addBackBtn.Visibility = Visibility.Hidden;
+                    sttBtn.Visibility = Visibility.Collapsed;
+                    addBackBtn.Visibility = Visibility.Collapsed;
+                    anlBtn.Visibility = Visibility.Collapsed;
                     break;
             }
         }
@@ -179,10 +185,13 @@ namespace DormitoryPATDesktop
             if (ContentArea.Content is Pages.RepairRequests.Item)
             {
                 MainWindow.init.OpenPages(new Pages.RepairRequests.Add(null));
+                sttBtn.Visibility = Visibility.Visible;
+                anlBtn.Visibility = Visibility.Visible;
             }
             else if (ContentArea.Content is Pages.Complaints.Item)
             {
                 MainWindow.init.OpenPages(new Pages.Complaints.Add(null));
+                sttBtn.Visibility = Visibility.Visible;
             }
             else if (ContentArea.Content is Pages.Students.Item)
             {
@@ -199,10 +208,22 @@ namespace DormitoryPATDesktop
             else if (ContentArea.Content is Pages.Complaints.Statistics)
             {
                 ContentArea.Content = new Pages.Complaints.Item();
+                sttBtn.Visibility = Visibility.Visible;
+                addBackBtn.Content = "Добавить";
             }
             else if (ContentArea.Content is Pages.RepairRequests.Statistics)
             {
                 ContentArea.Content = new Pages.RepairRequests.Item();
+                sttBtn.Visibility = Visibility.Visible;
+                anlBtn.Visibility = Visibility.Visible;
+                addBackBtn.Content = "Добавить";
+            }
+            else if (ContentArea.Content is Pages.RepairRequests.MaterialsAnalytics)
+            {
+                ContentArea.Content = new Pages.RepairRequests.Item();
+                sttBtn.Visibility = Visibility.Visible;
+                anlBtn.Visibility = Visibility.Visible;
+                addBackBtn.Content = "Добавить";
             }
         }
 
@@ -214,13 +235,38 @@ namespace DormitoryPATDesktop
                 addBackBtn.Visibility = Visibility.Visible;
                 addBackBtn.Content = "Назад";
             }
+            if (ContentArea.Content is Pages.RepairRequests.MaterialsAnalytics)
+            {
+                ContentArea.Content = new Pages.RepairRequests.Statistics();
+                addBackBtn.Visibility = Visibility.Visible;
+                addBackBtn.Content = "Назад";
+            }
             else if (ContentArea.Content is Pages.Complaints.Item)
             {
                 ContentArea.Content = new Pages.Complaints.Statistics();
                 addBackBtn.Visibility = Visibility.Visible;
                 addBackBtn.Content = "Назад";
             }
-            sttBtn.Visibility = Visibility.Hidden; // Скрываем кнопку Статистика при переходе
+            sttBtn.Visibility = Visibility.Collapsed; // Скрываем кнопку Статистика при переходе
+            anlBtn.Visibility = Visibility.Visible;
+        }
+
+        private void Analitika(object sender, RoutedEventArgs e)
+        {
+            if (ContentArea.Content is Pages.RepairRequests.Item)
+            {
+                ContentArea.Content = new Pages.RepairRequests.MaterialsAnalytics();
+                addBackBtn.Visibility = Visibility.Visible;
+                addBackBtn.Content = "Назад";
+            }
+            if (ContentArea.Content is Pages.RepairRequests.Statistics)
+            {
+                ContentArea.Content = new Pages.RepairRequests.MaterialsAnalytics();
+                addBackBtn.Visibility = Visibility.Visible;
+                addBackBtn.Content = "Назад";
+            }
+            anlBtn.Visibility = Visibility.Collapsed;
+            sttBtn.Visibility = Visibility.Visible;
         }
 
         private void Exit(object sender, RoutedEventArgs e)
@@ -228,6 +274,6 @@ namespace DormitoryPATDesktop
             Session.CurrentEmployeeId = null;
             Session.CurrentEmployeeRole = null;
             MainWindow.init.OpenPages(new Login());
-        }
+        }        
     }
 }

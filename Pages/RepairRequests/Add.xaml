@@ -4,10 +4,9 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="800"
       Title="Add"
       Background="#F5F6F5">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer VerticalScrollBarVisibility="Hidden">
         <Grid Margin="15">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -37,6 +36,7 @@
                         <ColumnDefinition Width="*" MinWidth="250"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -218,16 +218,16 @@
 
                     <!-- Мастер -->
                     <TextBlock Text="Назначить мастера:" 
-           Grid.Row="4" Grid.Column="0"
-           VerticalAlignment="Center" 
-           Margin="0,0,15,15"
-           FontSize="14" 
-           Foreground="#616161"/>
+                               Grid.Row="4" Grid.Column="0"
+                               VerticalAlignment="Center" 
+                               Margin="0,0,15,15"
+                               FontSize="14" 
+                               Foreground="#616161"/>
                     <ComboBox x:Name="cmbMaster" 
-          Grid.Row="4" Grid.Column="1"
-          Margin="0,0,0,15" 
-          FontSize="14" 
-          Padding="8">
+                              Grid.Row="4" Grid.Column="1"
+                              Margin="0,0,0,15" 
+                              FontSize="14" 
+                              Padding="8">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding FIO}" />
@@ -239,30 +239,29 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="ComboBox">
                                             <Border Background="White" 
-                                BorderBrush="#B0B0B0" 
-                                BorderThickness="1" 
-                                CornerRadius="5">
+                                                    BorderBrush="#B0B0B0" 
+                                                    BorderThickness="1" 
+                                                    CornerRadius="5">
                                                 <Grid>
                                                     <ToggleButton x:Name="ToggleButton" 
-                                              BorderThickness="0" 
-                                              Background="Transparent"
-                                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                              ClickMode="Press">
-                                                        <!-- Display the FIO of the selected item -->
+                                                                  BorderThickness="0" 
+                                                                  Background="Transparent"
+                                                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                                  ClickMode="Press">
                                                         <TextBlock Text="{Binding SelectedItem.FIO, RelativeSource={RelativeSource AncestorType=ComboBox}, FallbackValue='Выберите мастера'}" 
-                                               Margin="8,0" 
-                                               VerticalAlignment="Center"/>
+                                                                   Margin="8,0" 
+                                                                   VerticalAlignment="Center"/>
                                                     </ToggleButton>
                                                     <Popup x:Name="Popup"
-                                       IsOpen="{TemplateBinding IsDropDownOpen}"
-                                       Placement="Bottom"
-                                       AllowsTransparency="True">
+                                                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                           Placement="Bottom"
+                                                           AllowsTransparency="True">
                                                         <Border MaxHeight="200" 
-                                            MinWidth="{TemplateBinding ActualWidth}"
-                                            Background="White"
-                                            BorderBrush="#B0B0B0"
-                                            BorderThickness="1"
-                                            CornerRadius="5">
+                                                                MinWidth="{TemplateBinding ActualWidth}"
+                                                                Background="White"
+                                                                BorderBrush="#B0B0B0"
+                                                                BorderThickness="1"
+                                                                CornerRadius="5">
                                                             <ScrollViewer>
                                                                 <ItemsPresenter/>
                                                             </ScrollViewer>
@@ -375,8 +374,66 @@
                         </TextBox>
                     </Border>
 
+                    <!-- Кнопка для добавления материалов -->
+                    <TextBlock Text="Материалы:" 
+                               Grid.Row="7" Grid.Column="0"
+                               VerticalAlignment="Top" 
+                               Margin="0,5,15,15"
+                               FontSize="14" 
+                               Foreground="#616161"/>
+                    <StackPanel Grid.Row="7" Grid.Column="1" Margin="0,0,0,15">
+                        <Button x:Name="btnAddMaterials" 
+                                Content="Добавить материалы" 
+                                Click="BtnAddMaterials_Click" 
+                                Width="200" 
+                                Height="30" 
+                                FontSize="14" 
+                                Background="#2196F3" 
+                                Foreground="White" 
+                                BorderThickness="0" 
+                                Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="5"
+                                                        Padding="10,5">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#1976D2"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsPressed" Value="True">
+                                                        <Setter Property="Background" Value="#1565C0"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        <DataGrid x:Name="dgMaterials" 
+                                  Margin="0,10,0,0" 
+                                  AutoGenerateColumns="False" 
+                                  CanUserAddRows="True" 
+                                  CanUserDeleteRows="True" 
+                                  Height="100" 
+                                  Width="Auto"
+                                  Visibility="Collapsed">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Название материала" Binding="{Binding MaterialName}" Width="*" />
+                                <DataGridTextColumn Header="Количество" Binding="{Binding Quantity}" Width="*" />
+                                <DataGridTextColumn Header="Стоимость за единицу (руб)" Binding="{Binding CostPerUnit, StringFormat={}{0:F2}}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+
                     <!-- Даты -->
-                    <Grid Grid.Row="7" Grid.ColumnSpan="2" Margin="0,10,0,0">
+                    <Grid Grid.Row="8" Grid.ColumnSpan="2" Margin="0,10,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="10"/>

@@ -2,6 +2,7 @@
 using DormitoryPATDesktop.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,9 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
         private readonly bool _isNewRequest;
         private readonly EmployeesContext _employeesContext = new EmployeesContext();
         private readonly StudentsContext _studentsContext = new StudentsContext();
+        private readonly RepairRequestsContext _repairRequestsContext = new RepairRequestsContext();
+        private readonly RepairMaterialsContext _repairMaterialsContext = new RepairMaterialsContext();
+        private readonly ObservableCollection<RepairMaterials> _materials = new ObservableCollection<RepairMaterials>();
 
         public string TitleName => _isNewRequest ? "Добавление новой заявки" : "Редактирование заявки";
 
@@ -23,38 +27,36 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
             _request = request ?? new Models.RepairRequests();
             _isNewRequest = request == null;
 
+            dgMaterials.ItemsSource = _materials;
             DataContext = this;
             LoadEmployees();
             LoadRequestData();
+            UpdateMaterialsVisibility();
         }
 
         private void LoadRequestData()
         {
             if (!_isNewRequest)
             {
-                // Отображаем ФИО студента
                 var student = _studentsContext.Students
                     .FirstOrDefault(s => s.StudentId == _request.StudentId);
                 txtRequester.Text = student?.FIO ?? "Не указан";
-                txtRequester.IsReadOnly = true; // Только для чтения при редактировании
-
                 txtLocation.Text = _request.Location;
                 txtProblemDescription.Text = _request.UserComment;
                 txtCreationDate.Text = _request.RequestDate.ToString("g");
                 txtLastUpdateDate.Text = _request.LastStatusChange.ToString("g");
                 txtMasterComment.Text = _request.MasterComment;
 
-                // Устанавливаем тип проблемы
                 foreach (ComboBoxItem item in cmbProblemType.Items)
                 {
                     if (item.Content.ToString() == _request.Problem.ToString())
                     {
                         cmbProblemType.SelectedItem = item;
+                        cmbProblemType.IsEditable = true;
                         break;
                     }
                 }
 
-                // Устанавливаем статус
                 foreach (ComboBoxItem item in cmbStatus.Items)
                 {
                     if (item.Content.ToString() == _request.StatusDisplay)
@@ -63,18 +65,25 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                         break;
                     }
                 }
+
+                // Загружаем материалы для существующей заявки, если они есть
+                var materials = _repairMaterialsContext.RepairMaterials
+                    .Where(m => m.RequestId == _request.RequestId)
+                    .ToList();
+                foreach (var material in materials)
+                {
+                    _materials.Add(material);
+                }
             }
             else
             {
-                txtRequester.IsReadOnly = false; // Разрешаем ввод при добавлении
+                txtRequester.IsReadOnly = false;
                 txtLocation.IsReadOnly = false;
                 txtProblemDescription.IsReadOnly = false;
-                txtCreationDate.IsReadOnly = false;
-                txtLastUpdateDate.IsReadOnly = false;
+                cmbProblemType.IsEditable = false;
                 txtCreationDate.Text = DateTime.Now.ToString("g");
                 txtLastUpdateDate.Text = DateTime.Now.ToString("g");
 
-                // Устанавливаем статус "Создана" по умолчанию
                 foreach (ComboBoxItem item in cmbStatus.Items)
                 {
                     if (item.Content.ToString() == "Создана")
@@ -91,21 +100,25 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
             var masters = _employeesContext.Employees
                 .Where(e => e.EmployeeRole == EmployeeRole.Мастер)
                 .ToList();
-
             cmbMaster.ItemsSource = masters;
 
             if (!_isNewRequest && _request.MasterId.HasValue)
             {
                 var selectedMaster = masters.FirstOrDefault(e => e.EmployeeId == _request.MasterId);
-                if (selectedMaster != null)
-                {
-                    cmbMaster.SelectedItem = selectedMaster;
-                }
-                else
-                {
-                    cmbMaster.SelectedItem = null;
-                }
+                cmbMaster.SelectedItem = selectedMaster;
             }
+        }
+
+        private void BtnAddMaterials_Click(object sender, RoutedEventArgs e)
+        {
+            _materials.Add(new RepairMaterials { RequestId = _isNewRequest ? 0 : _request.RequestId });
+            UpdateMaterialsVisibility();
+        }
+
+        private void UpdateMaterialsVisibility()
+        {
+            dgMaterials.Visibility = _materials.Any() ? Visibility.Visible : Visibility.Collapsed;
+            btnAddMaterials.Visibility = _materials.Any() ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -114,12 +127,12 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
 
             try
             {
-                using (var context = new RepairRequestsContext())
+                using (var repairRequestsContext = new RepairRequestsContext())
+                using (var repairMaterialsContext = new RepairMaterialsContext())
                 {
                     Models.RepairRequests requestToSave;
                     long studentId;
 
-                    // Проверяем студента по введённому ФИО
                     if (_isNewRequest)
                     {
                         var student = _studentsContext.Students
@@ -141,11 +154,18 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                             LastStatusChange = DateTime.Now,
                             Status = RequestStatus.Создана
                         };
-                        context.RepairRequests.Add(requestToSave);
+                        repairRequestsContext.RepairRequests.Add(requestToSave);
+                        repairRequestsContext.SaveChanges();
+
+                        // Обновляем RequestId для всех материалов
+                        foreach (var material in _materials)
+                        {
+                            material.RequestId = requestToSave.RequestId;
+                        }
                     }
                     else
                     {
-                        requestToSave = context.RepairRequests
+                        requestToSave = repairRequestsContext.RepairRequests
                             .FirstOrDefault(r => r.RequestId == _request.RequestId);
 
                         if (requestToSave == null)
@@ -155,13 +175,18 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                             return;
                         }
 
-                        // StudentId не меняется при редактировании
                         studentId = requestToSave.StudentId;
                         requestToSave.Location = txtLocation.Text;
                         requestToSave.UserComment = txtProblemDescription.Text;
+
+                        // Удаляем старые материалы для этой заявки
+                        var existingMaterials = repairMaterialsContext.RepairMaterials
+                            .Where(m => m.RequestId == requestToSave.RequestId)
+                            .ToList();
+                        repairMaterialsContext.RepairMaterials.RemoveRange(existingMaterials);
+                        repairMaterialsContext.SaveChanges();
                     }
 
-                    // Общие поля для новой и существующей заявки
                     if (cmbMaster.SelectedItem is Employees selectedMaster)
                     {
                         requestToSave.MasterId = selectedMaster.EmployeeId;
@@ -196,8 +221,34 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                     }
 
                     requestToSave.MasterComment = txtMasterComment.Text;
+                    requestToSave.LastStatusChange = DateTime.Now;
 
-                    context.SaveChanges();
+                    repairRequestsContext.SaveChanges();
+
+                    // Сохраняем материалы только если они заполнены
+                    if (_materials.Any(m => !string.IsNullOrEmpty(m.MaterialName) && m.Quantity > 0 && m.CostPerUnit > 0))
+                    {
+                        foreach (var material in _materials)
+                        {
+                            if (material.MaterialId == 0) // Новый материал
+                            {
+                                material.RequestId = requestToSave.RequestId;
+                                repairMaterialsContext.RepairMaterials.Add(material);
+                            }
+                            else // Существующий материал
+                            {
+                                var existingMaterial = repairMaterialsContext.RepairMaterials
+                                    .FirstOrDefault(m => m.MaterialId == material.MaterialId);
+                                if (existingMaterial != null)
+                                {
+                                    existingMaterial.MaterialName = material.MaterialName;
+                                    existingMaterial.Quantity = material.Quantity;
+                                    existingMaterial.CostPerUnit = material.CostPerUnit;
+                                }
+                            }
+                        }
+                        repairMaterialsContext.SaveChanges();
+                    }
 
                     MessageBox.Show(_isNewRequest ?
                         "Заявка успешно создана." : "Изменения успешно сохранены.",

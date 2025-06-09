@@ -54,6 +54,7 @@
                                                 <Trigger Property="IsPressed" Value="True">
                                                     <Setter TargetName="border" Property="Background" Value="#E0E0E0"/>
                                                 </Trigger>
+                                                
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -161,7 +162,7 @@
                         BorderThickness="0"
                         Cursor="Hand"
                         Padding="10,5"
-                        Visibility="Hidden">
+                        Visibility="Collapsed">
                     <Button.Resources>
                         <Style TargetType="Button">
                             <Setter Property="Template">
@@ -170,6 +171,45 @@
                                         <Border Background="{TemplateBinding Background}"
                                                 CornerRadius="5"
                                                 Padding="{TemplateBinding Padding}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#1976D2"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter Property="Background" Value="#1565C0"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <!-- Statistic Button -->
+                <Button Click="Analitika" 
+        x:Name="anlBtn"         
+        Content="Аналитика" 
+        Height="30" 
+        Width="100" 
+        Margin="10,0,0,0"
+        FontSize="14"
+        Background="#FF8BE38E" 
+        Foreground="White"
+        BorderThickness="0"
+        Cursor="Hand"
+        Padding="10,5"
+        Visibility="Collapsed">
+                    <Button.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <ControlTemplate.Triggers>

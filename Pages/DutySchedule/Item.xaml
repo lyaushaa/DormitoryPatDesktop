@@ -42,66 +42,7 @@
                                 </Style>
                             </TextBox.Resources>
                         </TextBox>
-                    </Border>
-
-                    <ComboBox x:Name="cmbFloorFilter" 
-                          Width="140" 
-                          Margin="10,0,0,0"
-                          SelectionChanged="Filter_Changed"
-                          FontSize="14"
-                          VerticalContentAlignment="Center"
-                          Padding="8">
-                        <ComboBoxItem Content="Все этажи" IsSelected="True"/>
-                        <ComboBoxItem Content="1"/>
-                        <ComboBoxItem Content="2"/>
-                        <ComboBoxItem Content="3"/>
-                        <ComboBoxItem Content="4"/>
-                        <ComboBoxItem Content="5"/>
-                        <ComboBoxItem Content="6"/>
-                        <ComboBoxItem Content="7"/>
-                        <ComboBox.Resources>
-                            <Style TargetType="ComboBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ComboBox">
-                                            <Border Background="White" 
-                            BorderBrush="#B0B0B0" 
-                            BorderThickness="1" 
-                            CornerRadius="5">
-                                                <Grid>
-                                                    <ToggleButton x:Name="ToggleButton" 
-                                          BorderThickness="0" 
-                                          Background="Transparent"
-                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
-                                                    <ContentPresenter x:Name="ContentSite" 
-                                             Content="{TemplateBinding SelectionBoxItem}"
-                                             ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                             HorizontalAlignment="Left"
-                                             Margin="8,0,0,0"
-                                             VerticalAlignment="Center"/>
-                                                    <Popup x:Name="Popup"
-                                   IsOpen="{TemplateBinding IsDropDownOpen}"
-                                   Placement="Bottom"
-                                   AllowsTransparency="True">
-                                                        <Border MaxHeight="200" 
-                                        MinWidth="{TemplateBinding ActualWidth}"
-                                        Background="White"
-                                        BorderBrush="#B0B0B0"
-                                        BorderThickness="1"
-                                        CornerRadius="5">
-                                                            <ScrollViewer>
-                                                                <ItemsPresenter/>
-                                                            </ScrollViewer>
-                                                        </Border>
-                                                    </Popup>
-                                                </Grid>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ComboBox.Resources>
-                    </ComboBox>
+                    </Border>                    
 
                     <Border CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Width="160" Margin="10,0,0,0">
                         <DatePicker x:Name="dpDateFilter" 
@@ -120,23 +61,146 @@
                         </DatePicker>
                     </Border>
 
+                    <ComboBox x:Name="cmbFloorFilter" 
+      Width="140" 
+      Margin="10,0,0,0"
+      SelectionChanged="Filter_Changed"
+      FontSize="14"
+      VerticalContentAlignment="Center"
+      Padding="8">
+                        <ComboBoxItem Content="Все этажи" IsSelected="True"/>
+                        <ComboBoxItem Content="1"/>
+                        <ComboBoxItem Content="2"/>
+                        <ComboBoxItem Content="3"/>
+                        <ComboBoxItem Content="4"/>
+                        <ComboBoxItem Content="5"/>
+                        <ComboBoxItem Content="6"/>
+                        <ComboBoxItem Content="7"/>
+                        <ComboBox.Resources>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border Background="White" 
+        BorderBrush="#B0B0B0" 
+        BorderThickness="1" 
+        CornerRadius="5">
+                                                <Grid>
+                                                    <ToggleButton x:Name="ToggleButton" 
+                      BorderThickness="0" 
+                      Background="Transparent"
+                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                                    <ContentPresenter x:Name="ContentSite" 
+                         Content="{TemplateBinding SelectionBoxItem}"
+                         ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                         HorizontalAlignment="Left"
+                         Margin="8,0,0,0"
+                         VerticalAlignment="Center"/>
+                                                    <Popup x:Name="Popup"
+               IsOpen="{TemplateBinding IsDropDownOpen}"
+               Placement="Bottom"
+               AllowsTransparency="True">
+                                                        <Border MaxHeight="200" 
+                    MinWidth="{TemplateBinding ActualWidth}"
+                    Background="White"
+                    BorderBrush="#B0B0B0"
+                    BorderThickness="1"
+                    CornerRadius="5">
+                                                            <ScrollViewer>
+                                                                <ItemsPresenter/>
+                                                            </ScrollViewer>
+                                                        </Border>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Resources>
+                    </ComboBox>
+
+                    <ComboBox x:Name="cmbMonthFilter" 
+                          Width="140" 
+                          Margin="10,0,0,0"
+                          SelectionChanged="Filter_Changed"
+                          FontSize="14"
+                          VerticalContentAlignment="Center"
+                          Padding="8">
+                        <ComboBoxItem Content="Все месяцы" IsSelected="True"/>
+                        <ComboBoxItem Content="Январь"/>
+                        <ComboBoxItem Content="Февраль"/>
+                        <ComboBoxItem Content="Март"/>
+                        <ComboBoxItem Content="Апрель"/>
+                        <ComboBoxItem Content="Май"/>
+                        <ComboBoxItem Content="Июнь"/>
+                        <ComboBoxItem Content="Июль"/>
+                        <ComboBoxItem Content="Август"/>
+                        <ComboBoxItem Content="Сентябрь"/>
+                        <ComboBoxItem Content="Октябрь"/>
+                        <ComboBoxItem Content="Ноябрь"/>
+                        <ComboBoxItem Content="Декабрь"/>
+                        <ComboBox.Resources>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border Background="White" 
+                                                    BorderBrush="#B0B0B0" 
+                                                    BorderThickness="1" 
+                                                    CornerRadius="5">
+                                                <Grid>
+                                                    <ToggleButton x:Name="ToggleButton" 
+                                                                  BorderThickness="0" 
+                                                                  Background="Transparent"
+                                                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                                    <ContentPresenter x:Name="ContentSite" 
+                                                                      Content="{TemplateBinding SelectionBoxItem}"
+                                                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                                      HorizontalAlignment="Left"
+                                                                      Margin="8,0,0,0"
+                                                                      VerticalAlignment="Center"/>
+                                                    <Popup x:Name="Popup"
+                                                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                           Placement="Bottom"
+                                                           AllowsTransparency="True">
+                                                        <Border MaxHeight="200" 
+                                                                MinWidth="{TemplateBinding ActualWidth}"
+                                                                Background="White"
+                                                                BorderBrush="#B0B0B0"
+                                                                BorderThickness="1"
+                                                                CornerRadius="5">
+                                                            <ScrollViewer>
+                                                                <ItemsPresenter/>
+                                                            </ScrollViewer>
+                                                        </Border>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Resources>
+                    </ComboBox>
+
                     <Button Content="Обновить" 
-                        Click="RefreshButton_Click" 
-                        Margin="10,0,0,0"
-                        Padding="10,5"
-                        FontSize="14"
-                        Background="#2196F3"
-                        Foreground="White"
-                        BorderThickness="0"
-                        Cursor="Hand">
+                            Click="RefreshButton_Click" 
+                            Margin="10,0,0,0"
+                            Padding="10,5"
+                            FontSize="14"
+                            Background="#2196F3"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand">
                         <Button.Resources>
                             <Style TargetType="Button">
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="Button">
                                             <Border Background="{TemplateBinding Background}"
-                                                CornerRadius="5"
-                                                Padding="{TemplateBinding Padding}">
+                                                    CornerRadius="5"
+                                                    Padding="{TemplateBinding Padding}">
                                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                             <ControlTemplate.Triggers>
@@ -153,24 +217,58 @@
                             </Style>
                         </Button.Resources>
                     </Button>
+
+                    <Button Content="Экспорт в DOCX" 
+                            Click="ExportToDocx_Click" 
+                            Margin="10,0,0,0"
+                            Padding="10,5"
+                            FontSize="14"
+                            Background="#4CAF50"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    CornerRadius="5"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#45A049"/>
+                                                </Trigger>
+                                                <Trigger Property="IsPressed" Value="True">
+                                                    <Setter Property="Background" Value="#388E3C"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
                 </StackPanel>
             </Border>
 
             <!-- DataGrid -->
             <DataGrid Grid.Row="2" 
-                  x:Name="ScheduleDataGrid" 
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  IsReadOnly="True"
-                  SelectionMode="Single"
-                  Margin="0"
-                  Background="White"
-                  BorderBrush="#E0E0E0"
-                  BorderThickness="1"
-                  GridLinesVisibility="None"
-                  RowHeight="40"
-                  FontSize="14"
-                  MouseDoubleClick="ScheduleDataGrid_MouseDoubleClick">
+                      x:Name="ScheduleDataGrid" 
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      Margin="0"
+                      Background="White"
+                      BorderBrush="#E0E0E0"
+                      BorderThickness="1"
+                      GridLinesVisibility="None"
+                      RowHeight="40"
+                      FontSize="14"
+                      MouseDoubleClick="ScheduleDataGrid_MouseDoubleClick">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridRow">
                         <Setter Property="Background" Value="White"/>
@@ -201,8 +299,8 @@
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="№" 
-                                   Binding="{Binding ScheduleId}" 
-                                   Width="60">
+                                       Binding="{Binding ScheduleId}" 
+                                       Width="60">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextAlignment" Value="Center"/>
@@ -212,8 +310,8 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Этаж" 
-                                   Binding="{Binding Floor}" 
-                                   Width="*">
+                                       Binding="{Binding Floor}" 
+                                       Width="*">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextAlignment" Value="Center"/>
@@ -223,8 +321,8 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Комната" 
-                                   Binding="{Binding Room}" 
-                                   Width="*">
+                                       Binding="{Binding Room}" 
+                                       Width="*">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextAlignment" Value="Center"/>
@@ -234,8 +332,8 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Дата" 
-                                   Binding="{Binding Date, StringFormat='{}{0:dd.MM.yyyy}'}" 
-                                   Width="*">
+                                       Binding="{Binding Date, StringFormat='{}{0:dd.MM.yyyy}'}" 
+                                       Width="*">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextAlignment" Value="Center"/>
@@ -248,14 +346,14 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="Удалить" 
-                                    Click="DeleteButton_Click"
-                                    Foreground="#D32F2F"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    FontSize="14"
-                                    Cursor="Hand"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
+                                        Click="DeleteButton_Click"
+                                        Foreground="#D32F2F"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="14"
+                                        Cursor="Hand"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>

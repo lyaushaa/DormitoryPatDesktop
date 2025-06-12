@@ -12,13 +12,14 @@
         <!-- Header -->
         <Grid VerticalAlignment="Top">
             <Border Height="60" Background="White" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1" Margin="0,0,0,10">
-                <Label Content="Общежитие ПАТ" 
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Images/logo.png" Margin="5"/>
+                    <Label Content="Общежитие ПАТ" 
                        FontSize="28" 
                        FontWeight="SemiBold" 
                        VerticalAlignment="Center" 
-                       HorizontalAlignment="Left" 
-                       Margin="20,0,0,0" 
                        Foreground="#5D6572"/>
+                </StackPanel>
             </Border>
         </Grid>
 

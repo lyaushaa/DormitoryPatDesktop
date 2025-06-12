@@ -46,6 +46,7 @@
                         BorderBrush="#B0B0B0"
                         BorderThickness="1">
                     <TextBox x:Name="txtPhoneOrLogin"
+                             KeyDown="LogEnter"
                              Padding="8"
                              BorderThickness="0"
                              FontSize="14"
@@ -84,6 +85,7 @@
                             BorderThickness="1">
                         <Grid>
                             <PasswordBox x:Name="txtPassword"
+                                         KeyDown="LogEnter"
                                          Padding="8"
                                          BorderThickness="0"
                                          FontSize="14"

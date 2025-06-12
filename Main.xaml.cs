@@ -170,14 +170,45 @@ namespace DormitoryPATDesktop
                 {
                     button.Background = Brushes.Transparent;
                     button.Foreground = Brushes.Black;
+
+                    var border = FindVisualChild<Border>(button);
+                    if (border != null)
+                    {
+                        border.Background = Brushes.Transparent; // Устанавливаем фон по умолчанию
+                    }
                 }
             }
 
             activeButton.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#e0e0e0");
             activeButton.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#58a325");
 
+            var activeBorder = FindVisualChild<Border>(activeButton);
+            if (activeBorder != null)
+            {
+                activeBorder.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFF4F3F3"); // Устанавливаем фон при выделении
+            }
+
             LoadModule(CurrentModule);
         }
+
+        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T typedChild)
+                {
+                    return typedChild;
+                }
+                var childOfChild = FindVisualChild<T>(child);
+                if (childOfChild != null)
+                {
+                    return childOfChild;
+                }
+            }
+            return null;
+        }
+
 
         private void AddBack_Click(object sender, RoutedEventArgs e)
         {

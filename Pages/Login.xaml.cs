@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
 using DormitoryPATDesktop.Models;
 using DormitoryPATDesktop.Context;
+using System.Windows.Input;
 
 namespace DormitoryPATDesktop.Pages
 {
@@ -48,8 +49,9 @@ namespace DormitoryPATDesktop.Pages
             Session.CurrentEmployeeId = employee.EmployeeId;
             Session.CurrentEmployeeRole = employee.EmployeeRole;
 
-            MainWindow.init.OpenPages(new Main());
-
+            var mainPage = new Main();
+            mainPage.ContentArea.Content = new Pages.WelcomeScreen();
+            MainWindow.init.OpenPages(mainPage);
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -111,6 +113,43 @@ namespace DormitoryPATDesktop.Pages
         {
             txtErrorMessage.Text = message;
             txtErrorMessage.Visibility = Visibility.Visible;
+        }
+
+        private void LogEnter(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                string phoneOrLogin = txtPhoneOrLogin.Text.Trim();
+                string password = txtPassword.Password;
+
+                if (string.IsNullOrEmpty(phoneOrLogin) || string.IsNullOrEmpty(password))
+                {
+                    ShowError("Заполните все поля.");
+                    return;
+                }
+
+                var employee = _context.Employees
+                    .FirstOrDefault(emp => emp.PhoneNumber == phoneOrLogin || emp.Login == phoneOrLogin);
+
+                if (employee == null)
+                {
+                    ShowError("Пользователь не найден.");
+                    return;
+                }
+
+                if (!BCrypt.Net.BCrypt.Verify(password, employee.Password))
+                {
+                    ShowError("Неверный пароль.");
+                    return;
+                }
+
+                Session.CurrentEmployeeId = employee.EmployeeId;
+                Session.CurrentEmployeeRole = employee.EmployeeRole;
+                                
+                var mainPage = new Main();
+                mainPage.ContentArea.Content = new Pages.WelcomeScreen();
+                MainWindow.init.OpenPages(mainPage);
+            }
         }
     }
 

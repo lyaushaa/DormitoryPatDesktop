@@ -148,6 +148,7 @@ namespace DormitoryPATDesktop
                     ContentArea.Content = new Pages.DutySchedule.Item();
                     sttBtn.Visibility = Visibility.Collapsed;
                     anlBtn.Visibility = Visibility.Collapsed;
+                    addBackBtn.Visibility = Visibility.Visible;
                     addBackBtn.Content = "Добавить";
                     break;
                 default:

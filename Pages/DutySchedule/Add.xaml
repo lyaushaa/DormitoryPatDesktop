@@ -5,244 +5,423 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:DormitoryPATDesktop.Pages.DutySchedule"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
       Title="Add"
       Background="#F5F6F5">
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="15">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <TextBlock Text="{Binding TitleName}" 
+                   FontSize="28" 
+                   FontWeight="SemiBold" 
+                   Foreground="#5D6572" 
+                   Grid.Row="0" 
+                   Margin="0,0,0,10"/>
+
+        <!-- Фильтры: Год, Месяц, Этаж -->
+        <Grid Grid.Row="2" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="30"/>
+                <ColumnDefinition Width="*" MinWidth="150"/>
+                <ColumnDefinition Width="Auto" MinWidth="50"/>
+                <ColumnDefinition Width="*" MinWidth="150"/>
+                <ColumnDefinition Width="Auto" MinWidth="40"/>
+                <ColumnDefinition Width="*" MinWidth="150"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="10"/>
-                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Заголовок -->
-            <TextBlock Text="{Binding TitleName}" 
-                       FontSize="28" 
-                       FontWeight="SemiBold" 
-                       Foreground="#5D6572" 
-                       Grid.Row="0" 
-                       Margin="0,0,0,10"/>
-
-            <!-- Основная форма в карточке -->
-            <Border Grid.Row="2" 
-                    Background="White" 
-                    CornerRadius="8" 
-                    BorderThickness="1" 
-                    BorderBrush="#E0E0E0"
-                    Padding="20">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" MinWidth="120"/>
-                        <ColumnDefinition Width="*" MinWidth="250"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- Этаж -->
-                    <TextBlock Text="Этаж:" 
-                               Grid.Row="0" Grid.Column="0" 
-                               VerticalAlignment="Center" 
-                               Margin="0,0,15,15"
-                               FontSize="14" 
-                               Foreground="#616161"/>
-                    <ComboBox x:Name="cmbFloor" 
-                              Grid.Row="0" Grid.Column="1" 
-                              Margin="0,0,0,15" 
-                              FontSize="14" 
-                              Padding="8">
-                        <ComboBoxItem Content="1"/>
-                        <ComboBoxItem Content="2"/>
-                        <ComboBoxItem Content="3"/>
-                        <ComboBoxItem Content="4"/>
-                        <ComboBoxItem Content="5"/>
-                        <ComboBoxItem Content="6"/>
-                        <ComboBoxItem Content="7"/>
-                        <ComboBox.Resources>
-                            <Style TargetType="ComboBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ComboBox">
-                                            <Border Background="White" 
-                                                    BorderBrush="#B0B0B0" 
-                                                    BorderThickness="1" 
-                                                    CornerRadius="5">
-                                                <Grid>
-                                                    <ToggleButton x:Name="ToggleButton" 
-                                                                  BorderThickness="0" 
-                                                                  Background="Transparent"
-                                                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                                                  ClickMode="Press">
-                                                        <ContentPresenter x:Name="ContentSite" 
-                                                                          Content="{TemplateBinding SelectionBoxItem}"
-                                                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                                          HorizontalAlignment="Left"
-                                                                          VerticalAlignment="Center"/>
-                                                    </ToggleButton>
-                                                    <Popup x:Name="Popup"
-                                                           IsOpen="{TemplateBinding IsDropDownOpen}"
-                                                           Placement="Bottom"
-                                                           AllowsTransparency="True">
-                                                        <Border MaxHeight="200" 
-                                                                MinWidth="{TemplateBinding ActualWidth}"
-                                                                Background="White"
-                                                                BorderBrush="#B0B0B0"
-                                                                BorderThickness="1"
-                                                                CornerRadius="5">
-                                                            <ScrollViewer>
-                                                                <ItemsPresenter/>
-                                                            </ScrollViewer>
-                                                        </Border>
-                                                    </Popup>
-                                                </Grid>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ComboBox.Resources>
-                    </ComboBox>
-
-                    <!-- Комната -->
-                    <TextBlock Text="Комната:" 
-                               Grid.Row="1" Grid.Column="0" 
-                               VerticalAlignment="Center" 
-                               Margin="0,0,15,15"
-                               FontSize="14" 
-                               Foreground="#616161"/>
-                    <Border Grid.Row="1" Grid.Column="1" 
-                            CornerRadius="5" 
-                            BorderBrush="#B0B0B0" 
-                            BorderThickness="1" 
-                            Margin="0,0,0,15">
-                        <TextBox x:Name="txtRoom" 
-                                 Padding="8"
-                                 BorderThickness="0"
-                                 FontSize="14"
-                                 VerticalContentAlignment="Center">
-                            <TextBox.Resources>
-                                <Style TargetType="TextBox">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="TextBox">
-                                                <Border Background="Transparent" CornerRadius="4">
-                                                    <ScrollViewer x:Name="PART_ContentHost"/>
+            <!-- Год -->
+            <TextBlock Text="Год:" 
+                       Grid.Row="0" Grid.Column="0" 
+                       VerticalAlignment="Center" 
+                       Margin="0,0,15,15"
+                       FontSize="14" 
+                       Foreground="#616161"/>
+            <ComboBox x:Name="cmbYear" 
+                      Grid.Row="0" Grid.Column="1" 
+                      Margin="0,0,0,15" 
+                      FontSize="14" 
+                      Padding="8"
+                      SelectionChanged="cmbYear_SelectionChanged">
+                <ComboBoxItem Content="2024"/>
+                <ComboBoxItem Content="2025"/>
+                <ComboBoxItem Content="2026"/>
+                <ComboBox.Resources>
+                    <Style TargetType="ComboBox">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBox">
+                                    <Border Background="White" 
+                                            BorderBrush="#B0B0B0" 
+                                            BorderThickness="1" 
+                                            CornerRadius="5">
+                                        <Grid>
+                                            <ToggleButton x:Name="ToggleButton" 
+                                                          BorderThickness="0" 
+                                                          Background="Transparent"
+                                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                          ClickMode="Press">
+                                                <ContentPresenter x:Name="ContentSite" 
+                                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                                  HorizontalAlignment="Left"
+                                                                  VerticalAlignment="Center"/>
+                                            </ToggleButton>
+                                            <Popup x:Name="Popup"
+                                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                   Placement="Bottom"
+                                                   AllowsTransparency="True">
+                                                <Border MaxHeight="200" 
+                                                        MinWidth="{TemplateBinding ActualWidth}"
+                                                        Background="White"
+                                                        BorderBrush="#B0B0B0"
+                                                        BorderThickness="1"
+                                                        CornerRadius="5">
+                                                    <ScrollViewer>
+                                                        <ItemsPresenter/>
+                                                    </ScrollViewer>
                                                 </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </TextBox.Resources>
-                        </TextBox>
-                    </Border>
+                                            </Popup>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.Resources>
+            </ComboBox>
 
-                    <!-- Дата -->
-                    <TextBlock Text="Дата:" 
-                               Grid.Row="2" Grid.Column="0" 
-                               VerticalAlignment="Center" 
-                               Margin="0,0,15,15"
-                               FontSize="14" 
-                               Foreground="#616161"/>
-                    <Border Grid.Row="2" Grid.Column="1" 
-                            CornerRadius="5" 
-                            BorderBrush="#B0B0B0" 
-                            BorderThickness="1" 
-                            Margin="0,0,0,15">
-                        <DatePicker x:Name="dpDate" 
-                                    Padding="8" 
-                                    BorderThickness="0"
-                                    FontSize="14"
-                                    VerticalContentAlignment="Center"
-                                    SelectedDateFormat="Short">
-                            <DatePicker.Resources>
-                                <Style TargetType="DatePickerTextBox">
-                                    <Setter Property="BorderThickness" Value="0"/>
-                                    <Setter Property="Padding" Value="8,0"/>
-                                </Style>
-                            </DatePicker.Resources>
-                        </DatePicker>
-                    </Border>
-                </Grid>
-            </Border>
+            <!-- Месяц -->
+            <TextBlock Text="Месяц:" 
+                       Grid.Row="0" Grid.Column="2" 
+                       VerticalAlignment="Center" 
+                       Margin="10,0,15,15"
+                       FontSize="14" 
+                       Foreground="#616161"/>
+            <ComboBox x:Name="cmbMonth" 
+                      Grid.Row="0" Grid.Column="3" 
+                      Margin="0,0,0,15" 
+                      FontSize="14" 
+                      Padding="8"
+                      SelectionChanged="cmbMonth_SelectionChanged">
+                <ComboBoxItem Content="январь"/>
+                <ComboBoxItem Content="февраль"/>
+                <ComboBoxItem Content="март"/>
+                <ComboBoxItem Content="апрель"/>
+                <ComboBoxItem Content="май"/>
+                <ComboBoxItem Content="июнь"/>
+                <ComboBoxItem Content="июль"/>
+                <ComboBoxItem Content="август"/>
+                <ComboBoxItem Content="сентябрь"/>
+                <ComboBoxItem Content="октябрь"/>
+                <ComboBoxItem Content="ноябрь"/>
+                <ComboBoxItem Content="декабрь"/>
+                <ComboBox.Resources>
+                    <Style TargetType="ComboBox">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBox">
+                                    <Border Background="White" 
+                                            BorderBrush="#B0B0B0" 
+                                            BorderThickness="1" 
+                                            CornerRadius="5">
+                                        <Grid>
+                                            <ToggleButton x:Name="ToggleButton" 
+                                                          BorderThickness="0" 
+                                                          Background="Transparent"
+                                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                          ClickMode="Press">
+                                                <ContentPresenter x:Name="ContentSite" 
+                                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                                  HorizontalAlignment="Left"
+                                                                  VerticalAlignment="Center"/>
+                                            </ToggleButton>
+                                            <Popup x:Name="Popup"
+                                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                   Placement="Bottom"
+                                                   AllowsTransparency="True">
+                                                <Border MaxHeight="200" 
+                                                        MinWidth="{TemplateBinding ActualWidth}"
+                                                        Background="White"
+                                                        BorderBrush="#B0B0B0"
+                                                        BorderThickness="1"
+                                                        CornerRadius="5">
+                                                    <ScrollViewer>
+                                                        <ItemsPresenter/>
+                                                    </ScrollViewer>
+                                                </Border>
+                                            </Popup>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.Resources>
+            </ComboBox>
 
-            <!-- Кнопки действий -->
-            <StackPanel Grid.Row="3" 
-                        Orientation="Horizontal" 
-                        HorizontalAlignment="Right" 
-                        Margin="0,20,0,0">
-                <Button Content="ОТМЕНА" 
-                        Width="120" 
-                        Height="36" 
-                        Margin="0,0,15,0"
-                        Click="CancelButton_Click"
-                        Background="#D32F2F"
-                        Foreground="White"
-                        BorderThickness="0"
-                        FontSize="14"
-                        Cursor="Hand">
-                    <Button.Resources>
-                        <Style TargetType="Button">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                                CornerRadius="5"
-                                                Padding="10,5">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#B71C1C"/>
-                                            </Trigger>
-                                            <Trigger Property="IsPressed" Value="True">
-                                                <Setter Property="Background" Value="#9A0007"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Button.Resources>
-                </Button>
-
-                <Button Content="СОХРАНИТЬ" 
-                        Width="120" 
-                        Height="36"
-                        Click="SaveButton_Click"
-                        Background="#2196F3"
-                        Foreground="White"
-                        BorderThickness="0"
-                        FontSize="14"
-                        Cursor="Hand">
-                    <Button.Resources>
-                        <Style TargetType="Button">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                                CornerRadius="5"
-                                                Padding="10,5">
-                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="#1976D2"/>
-                                            </Trigger>
-                                            <Trigger Property="IsPressed" Value="True">
-                                                <Setter Property="Background" Value="#1565C0"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Button.Resources>
-                </Button>
-            </StackPanel>
+            <!-- Этаж -->
+            <TextBlock Text="Этаж:" 
+                       Grid.Row="0" Grid.Column="4" 
+                       VerticalAlignment="Center" 
+                       Margin="10,0,15,15"
+                       FontSize="14" 
+                       Foreground="#616161"/>
+            <ComboBox x:Name="cmbFloor" 
+                      Grid.Row="0" Grid.Column="5" 
+                      Margin="0,0,0,15" 
+                      FontSize="14" 
+                      Padding="8"
+                      SelectionChanged="cmbFloor_SelectionChanged">
+                <ComboBoxItem Content="2"/>
+                <ComboBoxItem Content="3"/>
+                <ComboBoxItem Content="4"/>
+                <ComboBoxItem Content="5"/>
+                <ComboBoxItem Content="6"/>
+                <ComboBoxItem Content="7"/>
+                <ComboBox.Resources>
+                    <Style TargetType="ComboBox">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBox">
+                                    <Border Background="White" 
+                                            BorderBrush="#B0B0B0" 
+                                            BorderThickness="1" 
+                                            CornerRadius="5">
+                                        <Grid>
+                                            <ToggleButton x:Name="ToggleButton" 
+                                                          BorderThickness="0" 
+                                                          Background="Transparent"
+                                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                          ClickMode="Press">
+                                                <ContentPresenter x:Name="ContentSite" 
+                                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                                  HorizontalAlignment="Left"
+                                                                  VerticalAlignment="Center"/>
+                                            </ToggleButton>
+                                            <Popup x:Name="Popup"
+                                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                   Placement="Bottom"
+                                                   AllowsTransparency="True">
+                                                <Border MaxHeight="200" 
+                                                        MinWidth="{TemplateBinding ActualWidth}"
+                                                        Background="White"
+                                                        BorderBrush="#B0B0B0"
+                                                        BorderThickness="1"
+                                                        CornerRadius="5">
+                                                    <ScrollViewer>
+                                                        <ItemsPresenter/>
+                                                    </ScrollViewer>
+                                                </Border>
+                                            </Popup>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ComboBox.Resources>
+            </ComboBox>
         </Grid>
-    </ScrollViewer>
+
+        <!-- Таблица для ввода комнат -->
+        <Border Grid.Row="4" 
+                Background="White" 
+                CornerRadius="8" 
+                BorderThickness="1" 
+                BorderBrush="#E0E0E0"
+                Padding="20">
+            <DataGrid x:Name="dgSchedule" 
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="True"
+                      IsReadOnly="False"
+                      SelectionMode="Single"
+                      Margin="0"
+                      Background="White"
+                      BorderBrush="#E0E0E0"
+                      BorderThickness="1"
+                      GridLinesVisibility="None" 
+                      RowHeight="40"
+                      FontSize="14"
+                      VerticalScrollBarVisibility="Auto">
+                <!-- Прокрутка только внутри DataGrid -->
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#F0F0F0"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#F5F5F5"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#E3F2FD"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#FAFAFA"/>
+                        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="Padding" Value="10"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="FontSize" Value="14"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Год" 
+                                        Binding="{Binding Year}" 
+                                        IsReadOnly="True" 
+                                        Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Месяц" 
+                                        Binding="{Binding Month}" 
+                                        IsReadOnly="True" 
+                                        Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="День" 
+                                        Binding="{Binding Day}" 
+                                        IsReadOnly="True" 
+                                        Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Этаж" 
+                                        Binding="{Binding Floor}" 
+                                        IsReadOnly="True" 
+                                        Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Комната" 
+                                        Binding="{Binding Room, UpdateSourceTrigger=PropertyChanged}" 
+                                        Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                        <DataGridTextColumn.EditingElementStyle>
+                            <Style TargetType="TextBox">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.EditingElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Кнопки действий -->
+        <StackPanel Grid.Row="5" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,20,0,0">
+            <Button Content="ОТМЕНА" 
+                    Width="120" 
+                    Height="36" 
+                    Margin="0,0,15,0"
+                    Click="CancelButton_Click"
+                    Background="#D32F2F"
+                    Foreground="White"
+                    BorderThickness="0"
+                    FontSize="14"
+                    Cursor="Hand">
+                <Button.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="5"
+                                            Padding="10,5">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#B71C1C"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="#9A0007"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Resources>
+            </Button>
+
+            <Button Content="СОХРАНИТЬ" 
+                    Width="120" 
+                    Height="36"
+                    Click="SaveButton_Click"
+                    Background="#2196F3"
+                    Foreground="White"
+                    BorderThickness="0"
+                    FontSize="14"
+                    Cursor="Hand">
+                <Button.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
+                                            CornerRadius="5"
+                                            Padding="10,5">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#1976D2"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter Property="Background" Value="#1565C0"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
+    </Grid>
 </Page>

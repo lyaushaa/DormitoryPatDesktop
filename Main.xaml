@@ -54,8 +54,7 @@
                                                 </Trigger>
                                                 <Trigger Property="IsPressed" Value="True">
                                                     <Setter TargetName="border" Property="Background" Value="#E0E0E0"/>
-                                                </Trigger>
-                                                
+                                                </Trigger>                                                
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Setter.Value>

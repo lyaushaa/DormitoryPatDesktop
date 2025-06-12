@@ -45,6 +45,9 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <!-- ФИО -->
@@ -80,14 +83,48 @@
                         </TextBox>
                     </Border>
 
-                    <!-- Телефон -->
-                    <TextBlock Text="Телефон:" 
+                    <!-- Группа -->
+                    <TextBlock Text="Группа:" 
                                Grid.Row="1" Grid.Column="0" 
                                VerticalAlignment="Center" 
                                Margin="0,0,15,15"
                                FontSize="14" 
                                Foreground="#616161"/>
                     <Border Grid.Row="1" Grid.Column="1" 
+                            CornerRadius="5" 
+                            BorderBrush="#B0B0B0" 
+                            BorderThickness="1" 
+                            Margin="0,0,0,15">
+                        <TextBox x:Name="txtGroup" 
+                                 Padding="8"
+                                 BorderThickness="0"
+                                 FontSize="14"
+                                 VerticalContentAlignment="Center"
+                                 ToolTip="Формат: ИСП-21-2 (спец-ть-год-номер группы)">
+                            <TextBox.Resources>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <Border Background="Transparent" CornerRadius="4">
+                                                    <ScrollViewer x:Name="PART_ContentHost"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TextBox.Resources>
+                        </TextBox>
+                    </Border>
+
+                    <!-- Телефон -->
+                    <TextBlock Text="Телефон:" 
+                               Grid.Row="2" Grid.Column="0" 
+                               VerticalAlignment="Center" 
+                               Margin="0,0,15,15"
+                               FontSize="14" 
+                               Foreground="#616161"/>
+                    <Border Grid.Row="2" Grid.Column="1" 
                             CornerRadius="5" 
                             BorderBrush="#B0B0B0" 
                             BorderThickness="1" 
@@ -115,12 +152,12 @@
 
                     <!-- Дата рождения -->
                     <TextBlock Text="Дата рождения:" 
-                               Grid.Row="2" Grid.Column="0" 
+                               Grid.Row="3" Grid.Column="0" 
                                VerticalAlignment="Center" 
                                Margin="0,0,15,15"
                                FontSize="14" 
                                Foreground="#616161"/>
-                    <Border Grid.Row="2" Grid.Column="1" 
+                    <Border Grid.Row="3" Grid.Column="1" 
                             CornerRadius="5" 
                             BorderBrush="#B0B0B0" 
                             BorderThickness="1" 
@@ -142,13 +179,13 @@
 
                     <!-- Этаж -->
                     <TextBlock Text="Этаж:" 
-                               Grid.Row="3" Grid.Column="0" 
+                               Grid.Row="4" Grid.Column="0" 
                                VerticalAlignment="Center" 
                                Margin="0,0,15,15"
                                FontSize="14" 
                                Foreground="#616161"/>
                     <ComboBox x:Name="cmbFloor" 
-                              Grid.Row="3" Grid.Column="1" 
+                              Grid.Row="4" Grid.Column="1" 
                               Margin="0,0,0,15" 
                               FontSize="14" 
                               Padding="8">
@@ -206,12 +243,12 @@
 
                     <!-- Комната -->
                     <TextBlock Text="Комната:" 
-                               Grid.Row="4" Grid.Column="0" 
+                               Grid.Row="5" Grid.Column="0" 
                                VerticalAlignment="Center" 
                                Margin="0,0,15,15"
                                FontSize="14" 
                                Foreground="#616161"/>
-                    <Border Grid.Row="4" Grid.Column="1" 
+                    <Border Grid.Row="5" Grid.Column="1" 
                             CornerRadius="5" 
                             BorderBrush="#B0B0B0" 
                             BorderThickness="1" 
@@ -239,19 +276,19 @@
 
                     <!-- Роль -->
                     <TextBlock Text="Роль:" 
-                               Grid.Row="5" Grid.Column="0" 
+                               Grid.Row="6" Grid.Column="0" 
                                VerticalAlignment="Center" 
                                Margin="0,0,15,15"
                                FontSize="14" 
                                Foreground="#616161"/>
                     <ComboBox x:Name="cmbRole" 
-                              Grid.Row="5" Grid.Column="1" 
+                              Grid.Row="6" Grid.Column="1" 
                               Margin="0,0,0,15" 
                               FontSize="14" 
                               Padding="8">
                         <ComboBoxItem Content="Студент"/>
                         <ComboBoxItem Content="Староста этажа"/>
-                        <ComboBoxItem Content="Председатель общежития"/>
+                        <ComboBoxItem Content="Председатель Студенческого совета общежития"/>
                         <ComboBox.Resources>
                             <Style TargetType="ComboBox">
                                 <Setter Property="Template">
@@ -297,14 +334,68 @@
                         </ComboBox.Resources>
                     </ComboBox>
 
+                    <!-- Дата заселения -->
+                    <TextBlock Text="Дата заселения:" 
+                               Grid.Row="7" Grid.Column="0" 
+                               VerticalAlignment="Center" 
+                               Margin="0,0,15,15"
+                               FontSize="14" 
+                               Foreground="#616161"/>
+                    <Border Grid.Row="7" Grid.Column="1" 
+                            CornerRadius="5" 
+                            BorderBrush="#B0B0B0" 
+                            BorderThickness="1" 
+                            Margin="0,0,0,15">
+                        <DatePicker x:Name="dpCheckInDate" 
+                                    Padding="8" 
+                                    BorderThickness="0"
+                                    FontSize="14"
+                                    VerticalContentAlignment="Center"
+                                    SelectedDateFormat="Short">
+                            <DatePicker.Resources>
+                                <Style TargetType="DatePickerTextBox">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Padding" Value="8,0"/>
+                                </Style>
+                            </DatePicker.Resources>
+                        </DatePicker>
+                    </Border>
+
+                    <!-- Дата выселения -->
+                    <TextBlock Text="Дата выселения:" 
+                               Grid.Row="8" Grid.Column="0" 
+                               VerticalAlignment="Center" 
+                               Margin="0,0,15,15"
+                               FontSize="14" 
+                               Foreground="#616161"/>
+                    <Border Grid.Row="8" Grid.Column="1" 
+                            CornerRadius="5" 
+                            BorderBrush="#B0B0B0" 
+                            BorderThickness="1" 
+                            Margin="0,0,0,15">
+                        <DatePicker x:Name="dpCheckOutDate" 
+                                    Padding="8" 
+                                    BorderThickness="0"
+                                    FontSize="14"
+                                    VerticalContentAlignment="Center"
+                                    SelectedDateFormat="Short">
+                            <DatePicker.Resources>
+                                <Style TargetType="DatePickerTextBox">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Padding" Value="8,0"/>
+                                </Style>
+                            </DatePicker.Resources>
+                        </DatePicker>
+                    </Border>
+
                     <!-- Telegram ID -->
                     <TextBlock Text="Telegram ID:" 
-                               Grid.Row="6" Grid.Column="0" 
+                               Grid.Row="9" Grid.Column="0" 
                                VerticalAlignment="Center" 
                                Margin="0,0,15,0"
                                FontSize="14" 
                                Foreground="#616161"/>
-                    <Border Grid.Row="6" Grid.Column="1" 
+                    <Border Grid.Row="9" Grid.Column="1" 
                             CornerRadius="5" 
                             BorderBrush="#B0B0B0" 
                             BorderThickness="1">

@@ -55,7 +55,7 @@ namespace DormitoryPATDesktop.Pages.Students
                 {
                     "Студент" => StudentRole.Студент,
                     "Староста этажа" => StudentRole.Староста_этажа,
-                    "Председатель общежития" => StudentRole.Председатель_общежития,
+                    "Председатель Студенческого совета общежития" => StudentRole.Председатель_Студенческого_совета_общежития,
                     _ => (StudentRole?)null
                 };
 
@@ -85,6 +85,7 @@ namespace DormitoryPATDesktop.Pages.Students
                 var searchText = SearchTextBox.Text.ToLower();
                 filtered = filtered.Where(s =>
                     s.FIO.ToLower().Contains(searchText) ||
+                    s.Group.ToLower().Contains(searchText) || // Добавлен поиск по группе
                     s.PhoneNumber.Contains(searchText) ||
                     s.Room.ToString().Contains(searchText) ||
                     s.DateOfBirth.ToString().Contains(searchText) ||
@@ -147,7 +148,7 @@ namespace DormitoryPATDesktop.Pages.Students
                     var processingPage = new Add(selectedStudents);
                     MainWindow.init.OpenPages(processingPage);
                 }
-            }            
+            }
         }
     }
 }

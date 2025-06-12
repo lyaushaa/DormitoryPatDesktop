@@ -83,6 +83,12 @@ namespace DormitoryPATDesktop
             {
                 activeButton.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#e0e0e0");
                 activeButton.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#58a325");
+
+                var activeBorder = FindVisualChild<Border>(activeButton);
+                if (activeBorder != null)
+                {
+                    activeBorder.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFF4F3F3"); // Устанавливаем фон при выделении
+                }
             }
 
             // Загружаем соответствующий модуль

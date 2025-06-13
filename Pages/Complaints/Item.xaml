@@ -97,6 +97,39 @@
                             </Style>
                         </ComboBox.Resources>
                     </ComboBox>
+                    <!-- Фильтр по диапазону дат -->
+                    <Border CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Width="160" Margin="10,0,0,0">
+                        <DatePicker x:Name="StartDatePicker" 
+                                SelectedDateChanged="DatePicker_Changed" 
+                                Padding="8" 
+                                BorderThickness="0"
+                                FontSize="14"
+                                VerticalContentAlignment="Center"
+                                ToolTip="Начальная дата">
+                            <DatePicker.Resources>
+                                <Style TargetType="DatePickerTextBox">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Padding" Value="8,0"/>
+                                </Style>
+                            </DatePicker.Resources>
+                        </DatePicker>
+                    </Border>
+                    <Border CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Width="160" Margin="10,0,0,0">
+                        <DatePicker x:Name="EndDatePicker" 
+                                SelectedDateChanged="DatePicker_Changed" 
+                                Padding="8" 
+                                BorderThickness="0"
+                                FontSize="14"
+                                VerticalContentAlignment="Center"
+                                ToolTip="Конечная дата">
+                            <DatePicker.Resources>
+                                <Style TargetType="DatePickerTextBox">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="Padding" Value="8,0"/>
+                                </Style>
+                            </DatePicker.Resources>
+                        </DatePicker>
+                    </Border>
                     <Button Content="Обновить" 
                         Click="RefreshButton_Click" 
                         Margin="10,0,0,0"
@@ -238,7 +271,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Дата" 
-                                   Binding="{Binding SubmissionDate, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" 
+                                   Binding="{Binding SubmissionDate, StringFormat='{}{0:dd.MM.yyyy}'}" 
                                    Width="150">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">

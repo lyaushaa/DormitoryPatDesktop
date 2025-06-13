@@ -20,7 +20,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
             InitializeComponent();
             _allComplaints = new List<Models.Complaints>();
             ComplaintsDataGrid.BeginningEdit += (s, e) => e.Cancel = true;
-            if(Session.CurrentEmployeeRole == EmployeeRole.Администратор) Action_dgtc.Visibility = Visibility.Visible;
+            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор) Action_dgtc.Visibility = Visibility.Visible;
             LoadComplaints();
         }
 
@@ -79,6 +79,34 @@ namespace DormitoryPATDesktop.Pages.Complaints
                     }
                 }
 
+                // Применяем фильтр по диапазону дат
+                DateTime? startDate = StartDatePicker.SelectedDate;
+                DateTime? endDate = EndDatePicker.SelectedDate;
+
+                if (startDate.HasValue || endDate.HasValue)
+                {
+                    if (startDate.HasValue && !endDate.HasValue)
+                    {
+                        filteredComplaints = filteredComplaints.Where(c => c.SubmissionDate.Date >= startDate.Value.Date);
+                    }
+                    else if (!startDate.HasValue && endDate.HasValue)
+                    {
+                        filteredComplaints = filteredComplaints.Where(c => c.SubmissionDate.Date <= endDate.Value.Date);
+                    }
+                    else if (startDate.HasValue && endDate.HasValue)
+                    {
+                        if (endDate.Value < startDate.Value)
+                        {
+                            MessageBox.Show("Конечная дата не может быть меньше начальной даты.", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                            EndDatePicker.SelectedDate = startDate; // Устанавливаем конец равным началу
+                            return;
+                        }
+                        filteredComplaints = filteredComplaints.Where(c => c.SubmissionDate.Date >= startDate.Value.Date &&
+                                                                         c.SubmissionDate.Date <= endDate.Value.Date);
+                    }
+                }
+
                 // Применяем поиск по тексту
                 if (!string.IsNullOrWhiteSpace(SearchTextBox.Text))
                 {
@@ -89,12 +117,12 @@ namespace DormitoryPATDesktop.Pages.Complaints
                         (c.Comment != null && c.Comment.ToLower().Contains(searchText)));
                 }
 
-                // Сортируем: завершенные и отклоненные в конце
+                // Сортируем: завершенные и отклоненные в конце, затем по дате
                 var result = filteredComplaints
                     .OrderByDescending(c =>
                         c.Status == ComplaintStatus.Завершена ||
                         c.Status == ComplaintStatus.Отклонена ? 0 : 1)
-                    .ThenByDescending(c => c.LastStatusChange)
+                    .ThenByDescending(c => c.SubmissionDate)
                     .ToList();
 
                 ComplaintsDataGrid.ItemsSource = result;
@@ -113,6 +141,11 @@ namespace DormitoryPATDesktop.Pages.Complaints
         }
 
         private void StatusFilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFiltersAndSort();
+        }
+
+        private void DatePicker_Changed(object sender, SelectionChangedEventArgs e)
         {
             ApplyFiltersAndSort();
         }
@@ -175,7 +208,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
                     var processingPage = new Add(selectedComplaint);
                     MainWindow.init.OpenPages(processingPage);
                 }
-            }                
+            }
         }
     }
 }

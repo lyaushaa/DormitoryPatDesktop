@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Telegram.Bot.Requests.Abstractions;
 
 namespace DormitoryPATDesktop.Pages.RepairRequests
 {
@@ -92,6 +91,34 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                     }
                 }
 
+                // Фильтр по диапазону дат
+                DateTime? startDate = StartDatePicker.SelectedDate;
+                DateTime? endDate = EndDatePicker.SelectedDate;
+
+                if (startDate.HasValue || endDate.HasValue)
+                {
+                    if (startDate.HasValue && !endDate.HasValue)
+                    {
+                        filteredRequests = filteredRequests.Where(r => r.RequestDate.Date >= startDate.Value.Date);
+                    }
+                    else if (!startDate.HasValue && endDate.HasValue)
+                    {
+                        filteredRequests = filteredRequests.Where(r => r.RequestDate.Date <= endDate.Value.Date);
+                    }
+                    else if (startDate.HasValue && endDate.HasValue)
+                    {
+                        if (endDate.Value < startDate.Value)
+                        {
+                            MessageBox.Show("Конечная дата не может быть меньше начальной даты.", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                            EndDatePicker.SelectedDate = startDate; // Устанавливаем конец равным началу
+                            return;
+                        }
+                        filteredRequests = filteredRequests.Where(r => r.RequestDate.Date >= startDate.Value.Date &&
+                                                                      r.RequestDate.Date <= endDate.Value.Date);
+                    }
+                }
+
                 // Поиск по тексту
                 if (!string.IsNullOrWhiteSpace(SearchTextBox.Text))
                 {
@@ -125,6 +152,11 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
         }
 
         private void FilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFiltersAndSort();
+        }
+
+        private void DatePicker_Changed(object sender, SelectionChangedEventArgs e)
         {
             ApplyFiltersAndSort();
         }
@@ -187,7 +219,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                     var processingPage = new Add(selectedRequest);
                     MainWindow.init.OpenPages(processingPage);
                 }
-            }                
+            }
         }
     }
 }

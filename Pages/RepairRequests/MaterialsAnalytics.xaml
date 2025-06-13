@@ -3,13 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" >
+             xmlns:local="clr-namespace:DormitoryPATDesktop.Pages.RepairRequests"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
     <Border Grid.Column="1" 
             Margin="0,0,0,0" 
             Background="#F5F6F5" 
             CornerRadius="8" 
             BorderThickness="1">
-        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid Margin="15">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -22,24 +24,24 @@
                 </Grid.RowDefinitions>
 
                 <!-- Заголовок -->
-                <TextBlock Text="Аналитика материалов"
-                           FontSize="28"
-                           FontWeight="SemiBold"
-                           Foreground="#5D6572"
-                           Grid.Row="0"/>
+                <TextBlock Text="Аналитика по материалам"
+                       FontSize="28"
+                       FontWeight="SemiBold"
+                       Foreground="#5D6572"
+                       Grid.Row="0"/>
 
                 <!-- Выбор периода -->
                 <Border Grid.Row="2"
-                        Background="White"
-                        CornerRadius="8"
-                        BorderThickness="1"
-                        BorderBrush="#E0E0E0"
-                        Padding="20">
+                    Background="White"
+                    CornerRadius="8"
+                    BorderThickness="1"
+                    BorderBrush="#E0E0E0"
+                    Padding="20">
                     <StackPanel>
                         <TextBlock Text="Период:"
-                                   FontSize="14"
-                                   Foreground="#616161"
-                                   Margin="0,0,0,5"/>
+                               FontSize="14"
+                               Foreground="#616161"
+                               Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -47,41 +49,46 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <ComboBox x:Name="cbTimeRange"
-                                      Grid.Column="0"
-                                      Width="200"
-                                      Height="30"
-                                      FontSize="14"
-                                      SelectionChanged="CbTimeRange_SelectionChanged"
-                                      VerticalContentAlignment="Center">
+                                  Grid.Column="0"
+                                  Width="200"
+                                  Height="30"
+                                  FontSize="14"
+                                  SelectionChanged="CbTimeRange_SelectionChanged"
+                                  VerticalContentAlignment="Center">
+                                <ComboBoxItem Content="Текущий месяц"/>
+                                <ComboBoxItem Content="Последние 7 дней"/>
+                                <ComboBoxItem Content="Последние 30 дней"/>
+                                <ComboBoxItem Content="Пользовательский"/>
                                 <ComboBox.Resources>
                                     <Style TargetType="ComboBox">
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="ComboBox">
                                                     <Border Background="White" 
-                            BorderBrush="#B0B0B0" 
-                            BorderThickness="1" 
-                            CornerRadius="5">
+                                                            BorderBrush="#B0B0B0" 
+                                                            BorderThickness="1" 
+                                                            CornerRadius="5">
                                                         <Grid>
                                                             <ToggleButton x:Name="ToggleButton" 
-                                          BorderThickness="0" 
-                                          Background="Transparent"
-                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                          ClickMode="Press">
-                                                                <TextBlock Text="{Binding SelectedItem.FIO, RelativeSource={RelativeSource AncestorType=ComboBox}, FallbackValue='Выберите период'}" 
-                                           Margin="8,0" 
-                                           VerticalAlignment="Center"/>
-                                                            </ToggleButton>
+                                                                          BorderThickness="0" 
+                                                                          Background="Transparent"
+                                                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                                            <ContentPresenter x:Name="ContentSite" 
+                                                                              Content="{TemplateBinding SelectionBoxItem}"
+                                                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                                              HorizontalAlignment="Left"
+                                                                              Margin="8,0,0,0"
+                                                                              VerticalAlignment="Center"/>
                                                             <Popup x:Name="Popup"
-                                   IsOpen="{TemplateBinding IsDropDownOpen}"
-                                   Placement="Bottom"
-                                   AllowsTransparency="True">
+                                                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                                   Placement="Bottom"
+                                                                   AllowsTransparency="True">
                                                                 <Border MaxHeight="200" 
-                                        MinWidth="{TemplateBinding ActualWidth}"
-                                        Background="White"
-                                        BorderBrush="#B0B0B0"
-                                        BorderThickness="1"
-                                        CornerRadius="5">
+                                                                        MinWidth="{TemplateBinding ActualWidth}"
+                                                                        Background="White"
+                                                                        BorderBrush="#B0B0B0"
+                                                                        BorderThickness="1"
+                                                                        CornerRadius="5">
                                                                     <ScrollViewer>
                                                                         <ItemsPresenter/>
                                                                     </ScrollViewer>
@@ -94,10 +101,6 @@
                                         </Setter>
                                     </Style>
                                 </ComboBox.Resources>
-                                <ComboBoxItem Content="Текущий месяц"/>
-                                <ComboBoxItem Content="Последние 7 дней"/>
-                                <ComboBoxItem Content="Последние 30 дней"/>
-                                <ComboBoxItem Content="Пользовательский"/>
                             </ComboBox>
                             <StackPanel x:Name="spCustomRange"
                                         Grid.Column="2"
@@ -105,10 +108,18 @@
                                         Visibility="Collapsed">
                                 <Border CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Width="160">
                                     <DatePicker x:Name="dpStartDate"
-                                                Padding="8"
+                                                Padding="8" 
                                                 BorderThickness="0"
                                                 FontSize="14"
-                                                SelectedDateChanged="DpDate_SelectedDateChanged"/>
+                                                VerticalContentAlignment="Center"
+                                                SelectedDateChanged="DpDate_SelectedDateChanged">
+                                        <DatePicker.Resources>
+                                            <Style TargetType="DatePickerTextBox">
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Padding" Value="8,0"/>
+                                            </Style>
+                                        </DatePicker.Resources>
+                                    </DatePicker>
                                 </Border>
                                 <TextBlock Text=" — "
                                            FontSize="14"
@@ -117,10 +128,18 @@
                                            Margin="10,0"/>
                                 <Border CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Width="160">
                                     <DatePicker x:Name="dpEndDate"
-                                                Padding="8"
+                                                Padding="8" 
                                                 BorderThickness="0"
                                                 FontSize="14"
-                                                SelectedDateChanged="DpDate_SelectedDateChanged"/>
+                                                VerticalContentAlignment="Center"
+                                                SelectedDateChanged="DpDate_SelectedDateChanged">
+                                        <DatePicker.Resources>
+                                            <Style TargetType="DatePickerTextBox">
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                                <Setter Property="Padding" Value="8,0"/>
+                                            </Style>
+                                        </DatePicker.Resources>
+                                    </DatePicker>
                                 </Border>
                             </StackPanel>
                         </Grid>

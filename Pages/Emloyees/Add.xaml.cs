@@ -32,6 +32,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
             {
                 txtFIO.Text = _employee.FIO;
                 txtPhone.Text = _employee.PhoneNumber;
+                txtTelegramId.Text = _employee.TelegramId?.ToString() ?? "";
                 txtLogin.Text = _employee.Login;
 
                 foreach (ComboBoxItem item in cmbRole.Items)
@@ -110,6 +111,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                         {
                             FIO = txtFIO.Text,
                             PhoneNumber = txtPhone.Text,
+                            TelegramId = long.TryParse(txtTelegramId.Text, out var telegramId) ? telegramId : (long?)null,
                             Login = txtLogin.Text,
                             Password = HashPassword(_currentPassword),
                             EmployeeRole = EmployeeRole.Мастер // Значение по умолчанию, будет перезаписано ниже
@@ -130,6 +132,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
 
                         employeeToSave.FIO = txtFIO.Text;
                         employeeToSave.PhoneNumber = txtPhone.Text;
+                        employeeToSave.TelegramId = long.TryParse(txtTelegramId.Text, out var telegramId) ? telegramId : (long?)null;
                         employeeToSave.Login = txtLogin.Text;
 
                         if (!string.IsNullOrEmpty(_currentPassword))
@@ -144,6 +147,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                         {
                             "Мастер" => EmployeeRole.Мастер,
                             "Воспитатель" => EmployeeRole.Воспитатель,
+                            "Дежурный воспитатель" => EmployeeRole.Дежурный_воспитатель,
                             "Заведующий общежитием" => EmployeeRole.Заведующий_общежитием,
                             "Администратор" => EmployeeRole.Администратор,
                             _ => employeeToSave.EmployeeRole
@@ -181,6 +185,13 @@ namespace DormitoryPATDesktop.Pages.Emloyees
             if (string.IsNullOrWhiteSpace(txtPhone.Text))
             {
                 MessageBox.Show("Введите номер телефона", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (long.TryParse(txtTelegramId.Text, out var telegramId) && telegramId < 0)
+            {
+                MessageBox.Show("Telegram ID не может быть отрицательным", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }

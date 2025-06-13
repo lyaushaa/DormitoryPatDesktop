@@ -52,7 +52,15 @@ namespace DormitoryPATDesktop
                         break;
 
                     case EmployeeRole.Воспитатель:
-                        // Только жалобы
+                        //
+                        RepairRequestsBtn.Visibility = Visibility.Collapsed;
+                        ComplaintsBtn.Visibility = Visibility.Visible;
+                        StudentsBtn.Visibility = Visibility.Visible;
+                        EmployeesBtn.Visibility = Visibility.Collapsed;
+                        DutyScheduleBtn.Visibility = Visibility.Visible;
+                        break;
+                    case EmployeeRole.Дежурный_воспитатель:
+                        //
                         RepairRequestsBtn.Visibility = Visibility.Collapsed;
                         ComplaintsBtn.Visibility = Visibility.Visible;
                         StudentsBtn.Visibility = Visibility.Visible;
@@ -126,21 +134,14 @@ namespace DormitoryPATDesktop
                     ContentArea.Content = new Pages.Students.Item();
                     sttBtn.Visibility = Visibility.Collapsed;
                     anlBtn.Visibility = Visibility.Collapsed;
-                    if (Session.CurrentEmployeeRole == EmployeeRole.Администратор || Session.CurrentEmployeeRole == EmployeeRole.Заведующий_общежитием)
-                    {
-                        addBackBtn.Content = "Добавить";
-                        addBackBtn.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        addBackBtn.Visibility = Visibility.Collapsed;
-                    }
+                    addBackBtn.Content = "Добавить";
+                    addBackBtn.Visibility = Visibility.Visible;
                     break;
                 case "Employees":
                     ContentArea.Content = new Pages.Emloyees.Item();
                     sttBtn.Visibility = Visibility.Collapsed;
                     anlBtn.Visibility = Visibility.Collapsed;
-                    if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
+                    if (Session.CurrentEmployeeRole == EmployeeRole.Администратор || Session.CurrentEmployeeRole == EmployeeRole.Заведующий_общежитием)
                     {
                         addBackBtn.Content = "Добавить";
                         addBackBtn.Visibility = Visibility.Visible;

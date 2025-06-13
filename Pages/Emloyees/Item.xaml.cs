@@ -3,23 +3,12 @@ using DormitoryPATDesktop.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DormitoryPATDesktop.Pages.Emloyees
 {
-    /// <summary>
-    /// Логика взаимодействия для Item.xaml
-    /// </summary>
     public partial class Item : UserControl
     {
         private readonly EmployeesContext _context;
@@ -65,6 +54,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                 {
                     "Мастер" => EmployeeRole.Мастер,
                     "Воспитатель" => EmployeeRole.Воспитатель,
+                    "Дежурный воспитатель" => EmployeeRole.Дежурный_воспитатель,
                     "Заведующий общежитием" => EmployeeRole.Заведующий_общежитием,
                     "Администратор" => EmployeeRole.Администратор,
                     _ => (EmployeeRole?)null
@@ -75,7 +65,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                     filtered = filtered.Where(e => e.EmployeeRole == role.Value);
                 }
             }
-            
+
             // Поиск
             if (!string.IsNullOrWhiteSpace(SearchTextBox.Text))
             {
@@ -83,6 +73,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                 filtered = filtered.Where(e =>
                     e.FIO.ToLower().Contains(searchText) ||
                     e.PhoneNumber.Contains(searchText) ||
+                    e.TelegramId.ToString().Contains(searchText) || // Добавлен поиск по Telegram ID
                     e.Login.ToLower().Contains(searchText));
             }
 
@@ -95,11 +86,6 @@ namespace DormitoryPATDesktop.Pages.Emloyees
         }
 
         private void FilterComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilters();
-        }
-
-        private void FilterCheckBox_Changed(object sender, RoutedEventArgs e)
         {
             ApplyFilters();
         }
@@ -142,7 +128,7 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                     var processingPage = new Add(selectedEmployee);
                     MainWindow.init.OpenPages(processingPage);
                 }
-            }                
+            }
         }
     }
 }

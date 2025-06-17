@@ -73,7 +73,6 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                 filtered = filtered.Where(e =>
                     e.FIO.ToLower().Contains(searchText) ||
                     e.PhoneNumber.Contains(searchText) ||
-                    e.TelegramId.ToString().Contains(searchText) || // Добавлен поиск по Telegram ID
                     e.Login.ToLower().Contains(searchText));
             }
 
@@ -121,13 +120,10 @@ namespace DormitoryPATDesktop.Pages.Emloyees
 
         private void EmployeesDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
+            if (EmployeesDataGrid.SelectedItem is Employees selectedEmployee)
             {
-                if (EmployeesDataGrid.SelectedItem is Employees selectedEmployee)
-                {
-                    var processingPage = new Add(selectedEmployee);
-                    MainWindow.init.OpenPages(processingPage);
-                }
+                var processingPage = new Add(selectedEmployee);
+                MainWindow.init.OpenPages(processingPage);
             }
         }
     }

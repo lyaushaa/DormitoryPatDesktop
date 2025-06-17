@@ -232,18 +232,7 @@
                                 <Setter Property="Padding" Value="5"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Telegram ID" 
-                   Binding="{Binding TelegramId}" 
-                   Width="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="TextAlignment" Value="Center"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="Padding" Value="5"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
+                    </DataGridTextColumn>                    
                     <DataGridTemplateColumn Header="Действие" Width="100" Visibility="Collapsed" x:Name="Action_dgtc">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

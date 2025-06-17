@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Telegram.Bot;
 
 namespace DormitoryPATDesktop.Pages.Complaints
 {
@@ -14,8 +15,10 @@ namespace DormitoryPATDesktop.Pages.Complaints
         private readonly bool _isNewComplaint;
         private readonly EmployeesContext _employeesContext = new EmployeesContext();
         private readonly StudentsContext _studentsContext = new StudentsContext();
+        private static readonly string BotToken = "7681929292:AAELFhLTiH3c4KZtnRrPY9aGD6gYyLWVo5E"; // Replace with your bot token
+        private static readonly TelegramBotClient _telegramClient = new TelegramBotClient(BotToken);
 
-        public string TitleName => _isNewComplaint ? "Добавление новой жалобы" : "Редактирование жалобы";
+        public string TitleName => _isNewComplaint ? "Добавление новой жалобы или пожелания" : "Редактирование пожелания или жалобы";
 
         public Add(Models.Complaints complaint)
         {
@@ -23,6 +26,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
             _complaint = complaint ?? new Models.Complaints();
             _isNewComplaint = complaint == null;
 
+            DataContext = this;
             InitializeUI();
             LoadEmployees();
             LoadComplaintData();
@@ -101,6 +105,29 @@ namespace DormitoryPATDesktop.Pages.Complaints
             }
         }
 
+        private async Task SendTelegramNotification(long? telegramId, string complaintText, ComplaintStatus newStatus, string? comment = null)
+        {
+            if (!telegramId.HasValue)
+            {
+                return; // Exit if no Telegram ID is provided
+            }
+
+            try
+            {
+                var message = $"🔔 Статус вашего пожелания или жалобы изменён на {newStatus}.\nТекст пожелания или жалобы: {complaintText}";
+                if (!string.IsNullOrEmpty(comment))
+                {
+                    message += $"\nКомментарий: {comment}";
+                }
+                await _telegramClient.SendMessage(telegramId.Value, message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при отправке уведомления: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             if (!ValidateInput()) return;
@@ -121,7 +148,6 @@ namespace DormitoryPATDesktop.Pages.Complaints
                             Status = Models.ComplaintStatus.Создана
                         };
 
-                        // Проверяем, является ли ввод "анонимно" (без учёта регистра)
                         string complainerText = txtComplainer.Text.Trim().ToLower();
                         if (complainerText != "анонимно")
                         {
@@ -135,12 +161,12 @@ namespace DormitoryPATDesktop.Pages.Complaints
                             }
                             complaintToSave.StudentId = student.StudentId;
                         }
-                        // Если "анонимно" или пусто, StudentId остаётся null
                         context.Complaints.Add(complaintToSave);
                     }
                     else
                     {
                         complaintToSave = context.Complaints
+                            .Include(c => c.Student)
                             .FirstOrDefault(c => c.ComplaintId == _complaint.ComplaintId);
 
                         if (complaintToSave == null)
@@ -151,7 +177,6 @@ namespace DormitoryPATDesktop.Pages.Complaints
                         }
                     }
 
-                    // Общие поля для новой и существующей жалобы
                     if (cmbProcessor.SelectedItem is Employees selectedEmployee)
                     {
                         complaintToSave.ReviewedBy = selectedEmployee.EmployeeId;
@@ -159,6 +184,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
 
                     if (cmbStatus.SelectedItem is ComboBoxItem selectedStatus)
                     {
+                        var oldStatus = complaintToSave.Status;
                         complaintToSave.Status = selectedStatus.Content.ToString() switch
                         {
                             "Создана" => Models.ComplaintStatus.Создана,
@@ -167,6 +193,28 @@ namespace DormitoryPATDesktop.Pages.Complaints
                             "Отклонена" => Models.ComplaintStatus.Отклонена,
                             _ => complaintToSave.Status
                         };
+
+                        if (oldStatus != complaintToSave.Status)
+                        {
+                            // Ask for confirmation to send comment in desktop app
+                            string? commentToSend = null;
+                            if (!string.IsNullOrWhiteSpace(txtComment.Text))
+                            {
+                                var result = MessageBox.Show("Хотите отправить комментарий студенту?", "Подтверждение комментария",
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                if (result == MessageBoxResult.Yes)
+                                {
+                                    commentToSend = txtComment.Text;
+                                }
+                            }
+
+                            // Send notification directly from desktop app
+                            var student = complaintToSave.Student;
+                            if (student?.TelegramId != null)
+                            {
+                                _ = SendTelegramNotification(student.TelegramId, complaintToSave.ComplaintText, complaintToSave.Status, commentToSend);
+                            }
+                        }
                     }
 
                     complaintToSave.Comment = txtComment.Text;

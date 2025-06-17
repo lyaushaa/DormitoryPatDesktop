@@ -25,8 +25,6 @@ namespace DormitoryPATDesktop.Models
         [Required]
         public string Password { get; set; }
 
-        public long? TelegramId { get; set; }
-
         // Навигационные свойства
         public ICollection<RepairRequests> AssignedRepairRequests { get; set; }        
         [InverseProperty("Reviewer")]

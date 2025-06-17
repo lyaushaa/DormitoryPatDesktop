@@ -156,6 +156,13 @@ namespace DormitoryPATDesktop.Pages.Students
                 return false;
             }
 
+            if (!Regex.IsMatch(txtFIO.Text, @"^[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+$"))
+            {
+                MessageBox.Show("Неверный формат ФИО. Требуется: Кириллица, формат 'Фамилия Имя Отчество'", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
             if (string.IsNullOrWhiteSpace(txtGroup.Text) || !Regex.IsMatch(txtGroup.Text, @"^[А-Яа-я]{2,3}-\d{2}-\d$"))
             {
                 MessageBox.Show("Введите группу в формате: ИСП-21-2 (специальность-год-номер группы)", "Ошибка",
@@ -166,6 +173,13 @@ namespace DormitoryPATDesktop.Pages.Students
             if (string.IsNullOrWhiteSpace(txtPhone.Text))
             {
                 MessageBox.Show("Введите номер телефона", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (!Regex.IsMatch(txtPhone.Text, @"^7\d{10}$"))
+            {
+                MessageBox.Show("Неверный формат телефона. Требуется: 11 цифр, начинается с 7 (например: 79161234567)", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
@@ -198,10 +212,28 @@ namespace DormitoryPATDesktop.Pages.Students
                 return false;
             }
 
+            int selectedFloor;
+            if (!int.TryParse(((ComboBoxItem)cmbFloor.SelectedItem).Content.ToString(), out selectedFloor))
+            {
+                MessageBox.Show("Не удалось определить выбранный этаж", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
             if (!int.TryParse(txtRoom.Text, out var room) || room <= 0)
             {
                 MessageBox.Show("Введите корректный номер комнаты", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            int minRoom = selectedFloor * 100 + 1;
+            int maxRoom = selectedFloor * 100 + 22;
+
+            if (room < minRoom || room > maxRoom)
+            {
+                MessageBox.Show($"Для {selectedFloor} этажа номер комнаты должен быть в диапазоне от {minRoom} до {maxRoom}",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 

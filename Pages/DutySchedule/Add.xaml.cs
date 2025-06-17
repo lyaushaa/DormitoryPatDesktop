@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Telegram.Bot;
 
 namespace DormitoryPATDesktop.Pages.DutySchedule
 {
@@ -15,6 +16,8 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
         private readonly bool _isEditMode;
         private readonly StudentsContext _studentsContext = new StudentsContext();
         private List<ScheduleEntry> _scheduleEntries = new List<ScheduleEntry>();
+        private static readonly string BotToken = "7681929292:AAELFhLTiH3c4KZtnRrPY9aGD6gYyLWVo5E"; // Replace with your bot token
+        private static readonly TelegramBotClient _telegramClient = new TelegramBotClient(BotToken);
 
         public string TitleName => _isEditMode ? "Редактирование дежурства" : "Новое дежурство";
 
@@ -49,7 +52,7 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
                         _scheduleEntries.Add(new ScheduleEntry
                         {
                             Year = year,
-                            Month = _schedule.Date.ToString("MM"),
+                            Month = _schedule.Date.ToString("MMMM"),
                             Day = day.ToString(),
                             Floor = floor,
                             Room = existingSchedules.ContainsKey(day) ? existingSchedules[day] : ""
@@ -125,6 +128,30 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
             dgSchedule.ItemsSource = _scheduleEntries;
         }
 
+        private async Task SendTelegramNotification(string monthName, int floor, bool isNew)
+        {
+            // Fetch only students on the affected floor with TelegramId from StudentsContext
+            var studentsOnFloor = _studentsContext.Students
+                .Where(s => s.Floor == floor && s.TelegramId.HasValue)
+                .Select(s => new { s.TelegramId })
+                .ToList();
+
+            try
+            {
+                var action = isNew ? "составлено" : "отредактировано";
+                var message = $"🔔 График дежурств на {monthName} для {floor}-го этажа {action}.";
+                foreach (var student in studentsOnFloor)
+                {
+                    await _telegramClient.SendMessage(student.TelegramId.Value, message);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при отправке уведомления: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             if (cmbYear.SelectedItem == null || cmbMonth.SelectedItem == null || cmbFloor.SelectedItem == null)
@@ -163,6 +190,10 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
                     }
 
                     context.SaveChanges();
+
+                    // Send notification based on whether it's a new or edited schedule
+                    _ = SendTelegramNotification(monthName, floor, !_isEditMode);
+
                     MessageBox.Show("Дежурства сохранены успешно!", "Успех",
                         MessageBoxButton.OK, MessageBoxImage.Information);
                     var mainPage = new Main();

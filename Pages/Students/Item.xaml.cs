@@ -141,13 +141,10 @@ namespace DormitoryPATDesktop.Pages.Students
 
         private void StudentsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор || Session.CurrentEmployeeRole == EmployeeRole.Заведующий_общежитием)
+            if (StudentsDataGrid.SelectedItem is Models.Students selectedStudents)
             {
-                if (StudentsDataGrid.SelectedItem is Models.Students selectedStudents)
-                {
-                    var processingPage = new Add(selectedStudents);
-                    MainWindow.init.OpenPages(processingPage);
-                }
+                var processingPage = new Add(selectedStudents);
+                MainWindow.init.OpenPages(processingPage);
             }
         }
     }

@@ -17,9 +17,7 @@
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <Border Grid.Row="0" Background="White" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1" Padding="15">
-                <TextBlock Text="{Binding TitleName}" FontSize="28" FontWeight="SemiBold" Foreground="#5D6572"/>
-            </Border>
+            <TextBlock Text="{Binding TitleName}" Grid.Row="0" FontSize="28" FontWeight="SemiBold" Foreground="#5D6572"/>
 
             <!-- Form -->
             <Border Grid.Row="2" Background="White" CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1" Padding="20">

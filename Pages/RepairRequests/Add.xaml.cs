@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Telegram.Bot;
 
 namespace DormitoryPATDesktop.Pages.RepairRequests
 {
@@ -18,6 +19,8 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
         private readonly RepairRequestsContext _repairRequestsContext = new RepairRequestsContext();
         private readonly RepairMaterialsContext _repairMaterialsContext = new RepairMaterialsContext();
         private readonly ObservableCollection<RepairMaterials> _materials = new ObservableCollection<RepairMaterials>();
+        private static readonly string BotToken = "7681929292:AAELFhLTiH3c4KZtnRrPY9aGD6gYyLWVo5E"; // Replace with your bot token
+        private static readonly TelegramBotClient _telegramClient = new TelegramBotClient(BotToken);
 
         public string TitleName => _isNewRequest ? "Добавление новой заявки" : "Редактирование заявки";
 
@@ -121,6 +124,29 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
             btnAddMaterials.Visibility = _materials.Any() ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        private async Task SendTelegramNotification(long? telegramId, string userComment, RequestStatus newStatus, string? masterComment = null)
+        {
+            if (!telegramId.HasValue)
+            {
+                return; // Exit if no Telegram ID is provided
+            }
+
+            try
+            {
+                var message = $"🔔 Статус вашей заявки изменён на {newStatus}.\nТекст заявки: {userComment}";
+                if (!string.IsNullOrEmpty(masterComment))
+                {
+                    message += $"\nКомментарий мастера: {masterComment}";
+                }
+                await _telegramClient.SendMessage(telegramId.Value, message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при отправке уведомления: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             if (!ValidateInput()) return;
@@ -166,7 +192,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                     else
                     {
                         requestToSave = repairRequestsContext.RepairRequests
-                            .FirstOrDefault(r => r.RequestId == _request.RequestId);
+                            .FirstOrDefault(r => r.RequestId == _request.RequestId); // Removed .Include(r => r.Student)
 
                         if (requestToSave == null)
                         {
@@ -209,6 +235,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
 
                     if (cmbStatus.SelectedItem is ComboBoxItem selectedStatus)
                     {
+                        var oldStatus = requestToSave.Status;
                         requestToSave.Status = selectedStatus.Content.ToString() switch
                         {
                             "Создана" => RequestStatus.Создана,
@@ -218,6 +245,29 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
                             "Отклонена" => RequestStatus.Отклонена,
                             _ => requestToSave.Status
                         };
+
+                        if (oldStatus != requestToSave.Status)
+                        {
+                            // Ask for confirmation to send master comment in desktop app
+                            string? masterCommentToSend = null;
+                            if (!string.IsNullOrWhiteSpace(txtMasterComment.Text))
+                            {
+                                var result = MessageBox.Show("Хотите отправить комментарий мастера студенту?", "Подтверждение комментария",
+                                    MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                if (result == MessageBoxResult.Yes)
+                                {
+                                    masterCommentToSend = txtMasterComment.Text;
+                                }
+                            }
+
+                            // Fetch student TelegramId using StudentsContext
+                            var student = _studentsContext.Students
+                                .FirstOrDefault(s => s.StudentId == studentId);
+                            if (student?.TelegramId != null)
+                            {
+                                _ = SendTelegramNotification(student.TelegramId, requestToSave.UserComment, requestToSave.Status, masterCommentToSend);
+                            }
+                        }
                     }
 
                     requestToSave.MasterComment = txtMasterComment.Text;

@@ -201,13 +201,10 @@ namespace DormitoryPATDesktop.Pages.Complaints
 
         private void ComplaintsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
+            if (ComplaintsDataGrid.SelectedItem is Models.Complaints selectedComplaint)
             {
-                if (ComplaintsDataGrid.SelectedItem is Models.Complaints selectedComplaint)
-                {
-                    var processingPage = new Add(selectedComplaint);
-                    MainWindow.init.OpenPages(processingPage);
-                }
+                var processingPage = new Add(selectedComplaint);
+                MainWindow.init.OpenPages(processingPage);
             }
         }
     }

@@ -75,7 +75,7 @@
                                 Tag="RepairRequests"
                                 x:Name="RepairRequestsBtn"/>
 
-                        <Button Content="Жалобы" 
+                        <Button Content="Пожелания и Жалобы" 
                                 Style="{StaticResource MenuButtonStyle}"
                                 Click="ModuleButton_Click"
                                 Tag="Complaints"

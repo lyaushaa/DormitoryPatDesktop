@@ -68,8 +68,7 @@
       FontSize="14"
       VerticalContentAlignment="Center"
       Padding="8">
-                        <ComboBoxItem Content="Все этажи" IsSelected="True"/>
-                        <ComboBoxItem Content="1"/>
+                        <ComboBoxItem Content="Все этажи" IsSelected="True"/>                        
                         <ComboBoxItem Content="2"/>
                         <ComboBoxItem Content="3"/>
                         <ComboBoxItem Content="4"/>

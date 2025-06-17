@@ -1,6 +1,7 @@
 ﻿using DormitoryPATDesktop.Context;
 using DormitoryPATDesktop.Models;
 using System;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -32,7 +33,6 @@ namespace DormitoryPATDesktop.Pages.Emloyees
             {
                 txtFIO.Text = _employee.FIO;
                 txtPhone.Text = _employee.PhoneNumber;
-                txtTelegramId.Text = _employee.TelegramId?.ToString() ?? "";
                 txtLogin.Text = _employee.Login;
 
                 foreach (ComboBoxItem item in cmbRole.Items)
@@ -111,7 +111,6 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                         {
                             FIO = txtFIO.Text,
                             PhoneNumber = txtPhone.Text,
-                            TelegramId = long.TryParse(txtTelegramId.Text, out var telegramId) ? telegramId : (long?)null,
                             Login = txtLogin.Text,
                             Password = HashPassword(_currentPassword),
                             EmployeeRole = EmployeeRole.Мастер // Значение по умолчанию, будет перезаписано ниже
@@ -132,7 +131,6 @@ namespace DormitoryPATDesktop.Pages.Emloyees
 
                         employeeToSave.FIO = txtFIO.Text;
                         employeeToSave.PhoneNumber = txtPhone.Text;
-                        employeeToSave.TelegramId = long.TryParse(txtTelegramId.Text, out var telegramId) ? telegramId : (long?)null;
                         employeeToSave.Login = txtLogin.Text;
 
                         if (!string.IsNullOrEmpty(_currentPassword))
@@ -182,6 +180,13 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                 return false;
             }
 
+            if (!Regex.IsMatch(txtFIO.Text, @"^[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+$"))
+            {
+                MessageBox.Show("Неверный формат ФИО. Требуется: Кириллица, формат 'Фамилия Имя Отчество'", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
             if (string.IsNullOrWhiteSpace(txtPhone.Text))
             {
                 MessageBox.Show("Введите номер телефона", "Ошибка",
@@ -189,9 +194,9 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                 return false;
             }
 
-            if (long.TryParse(txtTelegramId.Text, out var telegramId) && telegramId < 0)
+            if (!Regex.IsMatch(txtPhone.Text, @"^7\d{10}$"))
             {
-                MessageBox.Show("Telegram ID не может быть отрицательным", "Ошибка",
+                MessageBox.Show("Неверный формат телефона. Требуется: 11 цифр, начинается с 7 (например: 79161234567)", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
@@ -203,10 +208,24 @@ namespace DormitoryPATDesktop.Pages.Emloyees
                 return false;
             }
 
+            if (!Regex.IsMatch(txtLogin.Text, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                MessageBox.Show("Неверный формат email. Пример: example@domain.com", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
             if (_isNewEmployee && string.IsNullOrEmpty(_currentPassword))
             {
                 MessageBox.Show("Введите пароль", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (_isNewEmployee && !Regex.IsMatch(_currentPassword, @"^(?=.*[A-ZА-ЯЁ])(?=.*\d)(?=.*[^\w\s]).{8,}$"))
+            {
+                MessageBox.Show("Пароль должен содержать:\n- минимум 8 символов\n- хотя бы одну заглавную букву\n- хотя бы одну цифру\n- хотя бы один спецсимвол",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 

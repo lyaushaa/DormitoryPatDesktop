@@ -248,6 +248,7 @@ namespace DormitoryPATDesktop
             {
                 ContentArea.Content = new Pages.Complaints.Item();
                 sttBtn.Visibility = Visibility.Visible;
+                anlBtn.Visibility = Visibility.Collapsed;
                 addBackBtn.Content = "Добавить";
             }
             else if (ContentArea.Content is Pages.RepairRequests.Statistics)
@@ -272,12 +273,14 @@ namespace DormitoryPATDesktop
             {
                 ContentArea.Content = new Pages.RepairRequests.Statistics();
                 addBackBtn.Visibility = Visibility.Visible;
+                anlBtn.Visibility = Visibility.Visible;
                 addBackBtn.Content = "Назад";
             }
             if (ContentArea.Content is Pages.RepairRequests.MaterialsAnalytics)
             {
                 ContentArea.Content = new Pages.RepairRequests.Statistics();
                 addBackBtn.Visibility = Visibility.Visible;
+                anlBtn.Visibility = Visibility.Visible;
                 addBackBtn.Content = "Назад";
             }
             else if (ContentArea.Content is Pages.Complaints.Item)
@@ -287,7 +290,7 @@ namespace DormitoryPATDesktop
                 addBackBtn.Content = "Назад";
             }
             sttBtn.Visibility = Visibility.Collapsed; // Скрываем кнопку Статистика при переходе
-            anlBtn.Visibility = Visibility.Visible;
+            
         }
 
         private void Analitika(object sender, RoutedEventArgs e)

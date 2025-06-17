@@ -212,13 +212,10 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
 
         private void RequestDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (Session.CurrentEmployeeRole == EmployeeRole.Администратор)
+            if (RequestDataGrid.SelectedItem is Models.RepairRequests selectedRequest)
             {
-                if (RequestDataGrid.SelectedItem is Models.RepairRequests selectedRequest)
-                {
-                    var processingPage = new Add(selectedRequest);
-                    MainWindow.init.OpenPages(processingPage);
-                }
+                var processingPage = new Add(selectedRequest);
+                MainWindow.init.OpenPages(processingPage);
             }
         }
     }

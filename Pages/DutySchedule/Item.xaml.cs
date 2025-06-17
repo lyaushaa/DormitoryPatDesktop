@@ -75,12 +75,12 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
                 filtered = filtered.Where(d => d.Room == room);
             }
 
-            if (dpDateFilter.SelectedDate.HasValue)
+            if (dpDateFilter.SelectedDate.HasValue && cmbMonthFilter.SelectedIndex == 0)
             {
                 filtered = filtered.Where(d => d.Date.Date == dpDateFilter.SelectedDate.Value.Date);
             }
 
-            if (cmbMonthFilter.SelectedIndex > 0 &&
+            if (cmbMonthFilter.SelectedIndex > 0 && !dpDateFilter.SelectedDate.HasValue &&
                 cmbMonthFilter.SelectedItem is ComboBoxItem selectedMonth)
             {
                 var monthName = selectedMonth.Content.ToString();
@@ -98,7 +98,16 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
 
         private void Filter_Changed(object sender, EventArgs e)
         {
-            LoadSchedules();
+            if (sender == cmbMonthFilter && cmbMonthFilter.SelectedIndex > 0)
+            {
+                dpDateFilter.SelectedDate = null;
+            }
+            else if (sender == dpDateFilter && dpDateFilter.SelectedDate.HasValue)
+            {
+                cmbMonthFilter.SelectedIndex = 0;
+            }
+
+            ApplyFilters();
         }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -161,7 +170,7 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
 
             var month = new DateTime(year, monthNumber, 1);
 
-            // Открываем диалог сохранения файла
+            // Диалог сохранения файла
             var saveFileDialog = new Microsoft.Win32.SaveFileDialog
             {
                 Filter = "Word Document (*.docx)|*.docx",
@@ -179,126 +188,183 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
                         mainPart.Document = new Document();
                         Body body = mainPart.Document.AppendChild(new Body());
 
+                        // Настройка ориентации страницы на альбомную и полей (1 см = 567 twips)
+                        SectionProperties sectionProps = new SectionProperties();
+                        PageSize pageSize = new PageSize
+                        {
+                            Width = new DocumentFormat.OpenXml.UInt32Value((uint)15840), // 11 дюймов
+                            Height = new DocumentFormat.OpenXml.UInt32Value((uint)12240), // 8.5 дюймов
+                            Orient = PageOrientationValues.Landscape
+                        };
+                        PageMargin pageMargin = new PageMargin
+                        {
+                            Top = 567, // 1 см
+                            Bottom = 567, // 1 см
+                            Left = 567, // 1 см
+                            Right = 567 // 1 см
+                        };
+                        sectionProps.Append(pageSize);
+                        sectionProps.Append(pageMargin);
+                        body.Append(sectionProps);
+
                         // Заголовок
-                        Paragraph titlePara = body.AppendChild(new Paragraph());
-                        Run titleRun = titlePara.AppendChild(new Run());
-                        titleRun.RunProperties = new RunProperties(
+                        Paragraph headerPara = body.AppendChild(new Paragraph());
+                        Run headerRun = headerPara.AppendChild(new Run());
+                        headerRun.RunProperties = new RunProperties(
                             new RunFonts { Ascii = "Times New Roman" },
-                            new FontSize { Val = "36" }, // Шрифт 18 pt
+                            new FontSize { Val = "36" }, // 18 pt
                             new Bold()
                         );
-                        titleRun.AppendChild(new Text($"Расписание дежурств - Этаж {floor}"));
-                        titlePara.ParagraphProperties = new ParagraphProperties(
-                            new Justification() { Val = JustificationValues.Center }
-                        );
-
-                        // Добавляем отступ после заголовка
-                        Paragraph spacingPara = body.AppendChild(new Paragraph());
-                        spacingPara.ParagraphProperties = new ParagraphProperties(
-                            new SpacingBetweenLines { After = "200" } // Отступ 200 twips (примерно 0.1 дюйма)
+                        headerRun.AppendChild(new Text("Дежурство с 22:15 до 22:45 СДАЧА ДЕЖУРСТВА СТАРОСТЕ!!!"));
+                        headerPara.ParagraphProperties = new ParagraphProperties(
+                            new Justification { Val = JustificationValues.Center }
                         );
 
                         // Таблица
                         Table table = new Table();
 
                         TableProperties tableProps = new TableProperties(
-                            new TableWidth { Width = "100%", Type = TableWidthUnitValues.Pct }, // Таблица на всю ширину
+                            new TableWidth { Width = "100%", Type = TableWidthUnitValues.Pct },
                             new TableBorders(
-                                new TopBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
-                                new BottomBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
-                                new LeftBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
-                                new RightBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
-                                new InsideHorizontalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 },
-                                new InsideVerticalBorder() { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 4 }
+                                new TopBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                                new BottomBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                                new LeftBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                                new RightBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                                new InsideHorizontalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 },
+                                new InsideVerticalBorder { Val = new EnumValue<BorderValues>(BorderValues.Single), Size = 6 }
+                            ),
+                            new TableCellMargin(
+                                new TopMargin { Width = new StringValue("0"), Type = TableWidthUnitValues.Dxa }, // Интервал до 0
+                                new BottomMargin { Width = new StringValue("0"), Type = TableWidthUnitValues.Dxa }, // Интервал после 0
+                                new LeftMargin { Width = new StringValue("0"), Type = TableWidthUnitValues.Dxa },
+                                new RightMargin { Width = new StringValue("0"), Type = TableWidthUnitValues.Dxa }
                             )
                         );
                         table.AppendChild(tableProps);
 
-                        // Заголовки таблицы
+                        // Определяем диапазон комнат для этажа
+                        int startRoom = floor * 100 + 1;
+                        int endRoom = floor * 100 + 22; // 22 комнаты на этаж (401-422 для 4-го, 201-222 для 2-го)
+                        int daysInMonth = DateTime.DaysInMonth(year, monthNumber);
+
+                        // Заголовочная строка с датами
                         TableRow headerRow = new TableRow();
-                        TableCell dateCell = new TableCell();
-                        Paragraph datePara = dateCell.AppendChild(new Paragraph());
-                        Run dateRun = datePara.AppendChild(new Run());
-                        dateRun.RunProperties = new RunProperties(
-                            new RunFonts { Ascii = "Times New Roman" },
-                            new FontSize { Val = "32" }, // Шрифт 16 pt
-                            new Bold()
+                        TableCell emptyCell = new TableCell();
+                        Paragraph emptyPara = emptyCell.AppendChild(new Paragraph());
+                        emptyPara.AppendChild(new Run(new Text("")));
+                        emptyCell.TableCellProperties = new TableCellProperties(
+                            new TableCellWidth { Width = new StringValue("50"), Type = TableWidthUnitValues.Dxa }
                         );
-                        dateRun.AppendChild(new Text("Дата"));
-                        dateCell.TableCellProperties = new TableCellProperties(
-                            new TableCellWidth { Width = "15%", Type = TableWidthUnitValues.Pct },
-                            new ParagraphProperties(new Justification { Val = JustificationValues.Center }) // Выравнивание по центру
-                        );
-                        headerRow.Append(dateCell);
+                        headerRow.Append(emptyCell);
 
-                        TableCell roomCell = new TableCell();
-                        Paragraph roomPara = roomCell.AppendChild(new Paragraph());
-                        Run roomRun = roomPara.AppendChild(new Run());
-                        roomRun.RunProperties = new RunProperties(
-                            new RunFonts { Ascii = "Times New Roman" },
-                            new FontSize { Val = "32" }, // Шрифт 16 pt
-                            new Bold()
-                        );
-                        roomRun.AppendChild(new Text("Комната"));
-                        roomCell.TableCellProperties = new TableCellProperties(
-                            new TableCellWidth { Width = "85%", Type = TableWidthUnitValues.Pct },
-                            new ParagraphProperties(new Justification { Val = JustificationValues.Center }) // Выравнивание по центру
-                        );
-                        headerRow.Append(roomCell);
-
+                        for (int day = 1; day <= daysInMonth; day++)
+                        {
+                            TableCell dateCell = new TableCell();
+                            Paragraph datePara = dateCell.AppendChild(new Paragraph());
+                            Run dateRun = datePara.AppendChild(new Run());
+                            dateRun.RunProperties = new RunProperties(
+                                new RunFonts { Ascii = "Times New Roman" },
+                                new FontSize { Val = "32" }, // 16 pt
+                                new Bold()
+                            );
+                            dateRun.AppendChild(new Text(day.ToString("D2"))); // 01, 02, ...
+                            dateCell.TableCellProperties = new TableCellProperties(
+                                new TableCellWidth { Width = new StringValue((1000 / daysInMonth).ToString()), Type = TableWidthUnitValues.Dxa },
+                                new ParagraphProperties(new Justification { Val = JustificationValues.Center })
+                            );
+                            headerRow.Append(dateCell);
+                        }
                         table.Append(headerRow);
 
-                        // Данные
-                        for (int day = 1; day <= DateTime.DaysInMonth(month.Year, month.Month); day++)
+                        // Строки с комнатами
+                        for (int room = startRoom; room <= endRoom; room++)
                         {
-                            var date = new DateTime(month.Year, month.Month, day);
-                            var duty = filteredSchedules.FirstOrDefault(ds => ds.Date.Date == date.Date);
-                            var room = duty?.Room.ToString() ?? "Не назначено";
-
-                            TableRow dataRow = new TableRow();
-                            TableCell dateDataCell = new TableCell();
-                            Paragraph dateDataPara = dateDataCell.AppendChild(new Paragraph());
-                            Run dateDataRun = dateDataPara.AppendChild(new Run());
-                            dateDataRun.RunProperties = new RunProperties(
+                            TableRow roomRow = new TableRow();
+                            TableCell roomCell = new TableCell();
+                            Paragraph roomPara = roomCell.AppendChild(new Paragraph());
+                            Run roomRun = roomPara.AppendChild(new Run());
+                            roomRun.RunProperties = new RunProperties(
                                 new RunFonts { Ascii = "Times New Roman" },
-                                new FontSize { Val = "32" } // Шрифт 16 pt
+                                new FontSize { Val = "32" }, // 16 pt
+                                new Bold()
                             );
-                            dateDataRun.AppendChild(new Text(date.ToString("dd.MM")));
-                            dateDataCell.TableCellProperties = new TableCellProperties(
-                                new TableCellWidth { Width = "15%", Type = TableWidthUnitValues.Pct },
-                                new ParagraphProperties(new Justification { Val = JustificationValues.Center }) // Выравнивание по центру
+                            roomRun.AppendChild(new Text(room.ToString()));
+                            roomCell.TableCellProperties = new TableCellProperties(
+                                new TableCellWidth { Width = new StringValue("50"), Type = TableWidthUnitValues.Dxa },
+                                new ParagraphProperties(new Justification { Val = JustificationValues.Center })
                             );
-                            dataRow.Append(dateDataCell);
+                            roomRow.Append(roomCell);
 
-                            TableCell roomDataCell = new TableCell();
-                            Paragraph roomDataPara = roomDataCell.AppendChild(new Paragraph());
-                            Run roomDataRun = roomDataPara.AppendChild(new Run());
-                            roomDataRun.RunProperties = new RunProperties(
-                                new RunFonts { Ascii = "Times New Roman" },
-                                new FontSize { Val = "32" } // Шрифт 16 pt
-                            );
-                            roomDataRun.AppendChild(new Text(room));
-                            roomDataCell.TableCellProperties = new TableCellProperties(
-                                new TableCellWidth { Width = "85%", Type = TableWidthUnitValues.Pct },
-                                new ParagraphProperties(new Justification { Val = JustificationValues.Center }) // Выравнивание по центру
-                            );
-                            dataRow.Append(roomDataCell);
+                            for (int day = 1; day <= daysInMonth; day++)
+                            {
+                                var date = new DateTime(year, monthNumber, day);
+                                var duty = filteredSchedules.FirstOrDefault(ds => ds.Date.Date == date.Date && ds.Room == room);
+                                TableCell dataCell = new TableCell();
+                                Paragraph dataPara = dataCell.AppendChild(new Paragraph());
+                                Run dataRun = dataPara.AppendChild(new Run());
+                                dataRun.RunProperties = new RunProperties(
+                                    new RunFonts { Ascii = "Times New Roman" },
+                                    new FontSize { Val = "32" } // 16 pt
+                                );
 
-                            table.Append(dataRow);
+                                // Проверка на выходной (суббота или воскресенье)
+                                if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+                                {
+                                    dataRun.RunProperties.Append(new Color { Val = "FF0000" }); // Красный цвет для выходных
+                                }
+
+                                // Закрашивание ячейки, если есть дежурство
+                                if (duty != null)
+                                {
+                                    dataCell.TableCellProperties = new TableCellProperties(
+                                        new Shading { Val = ShadingPatternValues.Solid, Color = "auto", Fill = "808080" } // Серый фон для дежурства
+                                    );
+                                }
+
+                                dataCell.TableCellProperties ??= new TableCellProperties(
+                                    new ParagraphProperties(new Justification { Val = JustificationValues.Center })
+                                );
+                                roomRow.Append(dataCell);
+                            }
+                            table.Append(roomRow);
                         }
 
                         body.AppendChild(table);
 
-                        // Футер
-                        Paragraph footerPara = body.AppendChild(new Paragraph());
-                        Run footerRun = footerPara.AppendChild(new Run());
-                        footerRun.RunProperties = new RunProperties(
+                        // Футер с информацией о старостах (на новой строке)
+                        Paragraph footerPara1 = body.AppendChild(new Paragraph());
+                        Run footerRun1 = footerPara1.AppendChild(new Run());
+                        footerRun1.RunProperties = new RunProperties(
                             new RunFonts { Ascii = "Times New Roman" },
-                            new FontSize { Val = "28" }, // Шрифт 14 pt
+                            new FontSize { Val = "28" }, // 14 pt
                             new Italic()
                         );
-                        footerRun.AppendChild(new Text($"Этаж {floor} - {month:MMMM yyyy}"));
-                        footerPara.ParagraphProperties = new ParagraphProperties(
+                        footerRun1.AppendChild(new Text(GetStarostaInfo(floor)));
+                        footerPara1.ParagraphProperties = new ParagraphProperties(
+                            new Justification { Val = JustificationValues.Left }
+                        );
+
+                        Paragraph footerPara2 = body.AppendChild(new Paragraph());
+                        Run footerRun2 = footerPara2.AppendChild(new Run());
+                        footerRun2.RunProperties = new RunProperties(
+                            new RunFonts { Ascii = "Times New Roman" },
+                            new FontSize { Val = "28" }, // 14 pt
+                            new Italic()
+                        );
+                        footerRun2.AppendChild(new Text("Пакеты брать заранее у старост!"));
+                        footerPara2.ParagraphProperties = new ParagraphProperties(
+                            new Justification { Val = JustificationValues.Left }
+                        );
+
+                        Paragraph footerPara3 = body.AppendChild(new Paragraph());
+                        Run footerRun3 = footerPara3.AppendChild(new Run());
+                        footerRun3.RunProperties = new RunProperties(
+                            new RunFonts { Ascii = "Times New Roman" },
+                            new FontSize { Val = "28" }, // 14 pt
+                            new Italic()
+                        );
+                        footerRun3.AppendChild(new Text("Обязательно мыть мусорный бак!"));
+                        footerPara3.ParagraphProperties = new ParagraphProperties(
                             new Justification { Val = JustificationValues.Left }
                         );
 
@@ -312,5 +378,20 @@ namespace DormitoryPATDesktop.Pages.DutySchedule
                 }
             }
         }
+
+        private string GetStarostaInfo(int floor)
+        {
+            using (var studentsContext = new StudentsContext())
+            {
+                // Поиск студентов с ролью "Староста этажа" или "Председатель" для данного этажа
+                var starostas = studentsContext.Students
+                    .Where(s => s.Floor == floor && (s.StudentRole == StudentRole.Староста_этажа || s.StudentRole == StudentRole.Председатель_Студенческого_совета_общежития))
+                    .Select(s => $"{s.FIO} ({s.Room})")
+                    .ToList();
+
+                return starostas.Any() ? $"Старосты: {string.Join(", ", starostas)}" : "Старосты: не назначены";
+            }
+        }
     }
 }
+

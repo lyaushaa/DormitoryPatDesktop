@@ -19,7 +19,6 @@ namespace DormitoryPATDesktop.Pages.Complaints
             InitializeComponent();
             _context = new ComplaintsContext();
 
-            // Set default time range to current month
             _startDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             _endDate = DateTime.Today;
             cbTimeRange.SelectedIndex = 0;
@@ -76,14 +75,14 @@ namespace DormitoryPATDesktop.Pages.Complaints
         private void LoadData()
         {
             var complaints = _context.Complaints
+                .Include(c => c.Student)
                 .Include(c => c.Reviewer)
                 .Where(c => c.SubmissionDate >= _startDate && c.LastStatusChange <= _endDate)
                 .ToList();
 
             int total = complaints.Count;
-            double totalNonZero = total > 0 ? total : 1; // Avoid division by zero
+            double totalNonZero = total > 0 ? total : 1;
 
-            // По статусам
             int created = complaints.Count(c => c.Status == ComplaintStatus.Создана);
             int inProgress = complaints.Count(c => c.Status == ComplaintStatus.В_обработке);
             int completed = complaints.Count(c => c.Status == ComplaintStatus.Завершена);
@@ -95,7 +94,6 @@ namespace DormitoryPATDesktop.Pages.Complaints
             txtCompletedComplaints.Text = $"Завершена: {completed} ({(completed / totalNonZero * 100):F1}%)";
             txtRejectedComplaints.Text = $"Отклонена: {rejected} ({(rejected / totalNonZero * 100):F1}%)";
 
-            // По завершению
             var completedComplaints = complaints.Where(c => c.Status == ComplaintStatus.Завершена).ToList();
             double avgResolutionDays = completedComplaints.Any()
                 ? completedComplaints.Average(c => (c.LastStatusChange - c.SubmissionDate).TotalDays)
@@ -105,11 +103,14 @@ namespace DormitoryPATDesktop.Pages.Complaints
             txtCompletedPercentage.Text = $"Процент завершенных: {(completed / totalNonZero * 100):F1}%";
             txtAvgResolutionTime.Text = $"Среднее время решения: {avgResolutionDays:F1} дней";
 
-            // Дополнительно
-            int anonymous = complaints.Count(c => !c.StudentId.HasValue || c.StudentId == 0);
-            int commented = complaints.Count(c => !string.IsNullOrEmpty(c.Comment));
             double days = (_endDate - _startDate).TotalDays + 1;
             double avgDaily = total / (days > 0 ? days : 1);
+
+            var topStudent = complaints
+                .GroupBy(c => c.StudentId)
+                .Select(g => new { StudentId = g.Key, Count = g.Count(), Name = g.First().Student?.FIO ?? "Неизвестно" })
+                .OrderByDescending(g => g.Count)
+                .FirstOrDefault();
 
             var topReviewer = complaints
                 .Where(c => c.ReviewedBy.HasValue)
@@ -118,11 +119,14 @@ namespace DormitoryPATDesktop.Pages.Complaints
                 .OrderByDescending(g => g.Count)
                 .FirstOrDefault();
 
-            txtAnonymousComplaints.Text = $"Анонимные пожелания: {anonymous} ({(anonymous / totalNonZero * 100):F1}%)";
             txtAvgDailySubmissions.Text = $"Среднее количество пожеланий в день: {avgDaily:F1}";
-            txtTopReviewer.Text = topReviewer != null
-                ? $"Самый активный ревьюер: {topReviewer.Name} ({topReviewer.Count} пожеланий)"
-                : "Ревьюеры отсутствуют";
+            txtTopReviewer.Text = topStudent != null
+                ? $"Студент с наибольшим количеством пожеланий: {topStudent.Name} ({topStudent.Count} пожеланий)"
+                : "Пожелания отсутствуют";
+            txtTopReviewer.Text += "\n";
+            txtTopReviewer.Text += topReviewer != null
+                ? $"Сотрудник, обработавший больше всего пожеланий: {topReviewer.Name} ({topReviewer.Count} пожеланий)"
+                : "Обработчики отсутствуют";
         }
     }
 }

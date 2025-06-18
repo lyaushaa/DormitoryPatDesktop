@@ -59,12 +59,9 @@ namespace DormitoryPATDesktop.Pages.Complaints
         {
             if (!_isNewComplaint)
             {
-                // Отображаем ФИО студента или "Анонимно"
-                var student = _complaint.StudentId.HasValue
-                    ? _studentsContext.Students.FirstOrDefault(s => s.StudentId == _complaint.StudentId)
-                    : null;
-                txtComplainer.Text = student?.FIO ?? "Анонимно";
-                txtComplainer.IsReadOnly = true; // Только для чтения при редактировании
+                var student = _studentsContext.Students.FirstOrDefault(s => s.StudentId == _complaint.StudentId);
+                txtComplainer.Text = student?.FIO ?? "Студент не найден";
+                txtComplainer.IsReadOnly = true;
 
                 txtComplaintText.Text = _complaint.ComplaintText;
                 txtCreationDate.Text = _complaint.SubmissionDate.ToString("g");
@@ -90,6 +87,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
         {
             var employees = _employeesContext.Employees
                 .Where(e => e.EmployeeRole == Models.EmployeeRole.Воспитатель ||
+                           e.EmployeeRole == Models.EmployeeRole.Дежурный_воспитатель ||
                            e.EmployeeRole == Models.EmployeeRole.Заведующий_общежитием)
                 .ToList();
 
@@ -148,19 +146,15 @@ namespace DormitoryPATDesktop.Pages.Complaints
                             Status = Models.ComplaintStatus.Создана
                         };
 
-                        string complainerText = txtComplainer.Text.Trim().ToLower();
-                        if (complainerText != "анонимно")
+                        var student = _studentsContext.Students
+                            .FirstOrDefault(s => s.FIO.ToLower() == txtComplainer.Text.Trim().ToLower());
+                        if (student == null)
                         {
-                            var student = _studentsContext.Students
-                                .FirstOrDefault(s => s.FIO.ToLower() == complainerText);
-                            if (student == null)
-                            {
-                                MessageBox.Show("Студент с таким ФИО не найден.", "Ошибка",
-                                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                                return;
-                            }
-                            complaintToSave.StudentId = student.StudentId;
+                            MessageBox.Show("Студент с таким ФИО не найден.", "Ошибка",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
                         }
+                        complaintToSave.StudentId = student.StudentId;
                         context.Complaints.Add(complaintToSave);
                     }
                     else
@@ -196,7 +190,6 @@ namespace DormitoryPATDesktop.Pages.Complaints
 
                         if (oldStatus != complaintToSave.Status)
                         {
-                            // Ask for confirmation to send comment in desktop app
                             string? commentToSend = null;
                             if (!string.IsNullOrWhiteSpace(txtComment.Text))
                             {
@@ -208,7 +201,6 @@ namespace DormitoryPATDesktop.Pages.Complaints
                                 }
                             }
 
-                            // Send notification directly from desktop app
                             var student = complaintToSave.Student;
                             if (student?.TelegramId != null)
                             {
@@ -250,17 +242,13 @@ namespace DormitoryPATDesktop.Pages.Complaints
 
             if (_isNewComplaint)
             {
-                string complainerText = txtComplainer.Text.Trim().ToLower();
-                if (!string.IsNullOrWhiteSpace(complainerText) && complainerText != "анонимно")
+                var student = _studentsContext.Students
+                    .FirstOrDefault(s => s.FIO.ToLower() == txtComplainer.Text.Trim().ToLower());
+                if (student == null)
                 {
-                    var student = _studentsContext.Students
-                        .FirstOrDefault(s => s.FIO.ToLower() == complainerText);
-                    if (student == null)
-                    {
-                        MessageBox.Show("Студент с таким ФИО не найден.", "Ошибка",
-                            MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return false;
-                    }
+                    MessageBox.Show("Студент с таким ФИО не найден.", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return false;
                 }
             }
 

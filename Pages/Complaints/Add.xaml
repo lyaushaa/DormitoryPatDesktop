@@ -38,7 +38,7 @@
                     <!-- От кого -->
                     <TextBlock Text="От кого:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,15,15" FontSize="14" Foreground="#5D6572"/>
                     <Border Grid.Row="0" Grid.Column="1" CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Margin="0,0,0,15">
-                        <TextBox x:Name="txtComplainer" Text="Анонимно" Padding="8" FontSize="14" BorderThickness="0" IsReadOnly="True" Background="#F5F5F5">
+                        <TextBox x:Name="txtComplainer" Padding="8" FontSize="14" BorderThickness="0" IsReadOnly="True" Background="#F5F5F5">
                             <TextBox.Resources>
                                 <Style TargetType="TextBox">
                                     <Setter Property="Template">

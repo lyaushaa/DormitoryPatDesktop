@@ -9,7 +9,7 @@ namespace DormitoryPATDesktop.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long ComplaintId { get; set; }
         [ForeignKey("Student")]
-        public long? StudentId { get; set; }
+        public long StudentId { get; set; }
         [Required]
         public string ComplaintText { get; set; }
         [ForeignKey("Reviewer")]

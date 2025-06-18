@@ -89,7 +89,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
             int completed = complaints.Count(c => c.Status == ComplaintStatus.Завершена);
             int rejected = complaints.Count(c => c.Status == ComplaintStatus.Отклонена);
 
-            txtTotalComplaints.Text = $"Всего жалоб: {total}";
+            txtTotalComplaints.Text = $"Всего пожеланий: {total}";
             txtCreatedComplaints.Text = $"Создана: {created} ({(created / totalNonZero * 100):F1}%)";
             txtInProgressComplaints.Text = $"В обработке: {inProgress} ({(inProgress / totalNonZero * 100):F1}%)";
             txtCompletedComplaints.Text = $"Завершена: {completed} ({(completed / totalNonZero * 100):F1}%)";
@@ -101,7 +101,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
                 ? completedComplaints.Average(c => (c.LastStatusChange - c.SubmissionDate).TotalDays)
                 : 0;
 
-            txtCompletedCount.Text = $"Завершенных жалоб: {completed}";
+            txtCompletedCount.Text = $"Завершенных пожеланий: {completed}";
             txtCompletedPercentage.Text = $"Процент завершенных: {(completed / totalNonZero * 100):F1}%";
             txtAvgResolutionTime.Text = $"Среднее время решения: {avgResolutionDays:F1} дней";
 
@@ -118,11 +118,10 @@ namespace DormitoryPATDesktop.Pages.Complaints
                 .OrderByDescending(g => g.Count)
                 .FirstOrDefault();
 
-            txtAnonymousComplaints.Text = $"Анонимные жалобы: {anonymous} ({(anonymous / totalNonZero * 100):F1}%)";
-            txtCommentedComplaints.Text = $"Жалобы с комментариями: {commented} ({(commented / totalNonZero * 100):F1}%)";
-            txtAvgDailySubmissions.Text = $"Среднее количество жалоб в день: {avgDaily:F1}";
+            txtAnonymousComplaints.Text = $"Анонимные пожелания: {anonymous} ({(anonymous / totalNonZero * 100):F1}%)";
+            txtAvgDailySubmissions.Text = $"Среднее количество пожеланий в день: {avgDaily:F1}";
             txtTopReviewer.Text = topReviewer != null
-                ? $"Самый активный ревьюер: {topReviewer.Name} ({topReviewer.Count} жалоб)"
+                ? $"Самый активный ревьюер: {topReviewer.Name} ({topReviewer.Count} пожеланий)"
                 : "Ревьюеры отсутствуют";
         }
     }

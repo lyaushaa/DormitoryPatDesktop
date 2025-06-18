@@ -24,7 +24,7 @@ BorderThickness="1">
                 </Grid.RowDefinitions>
 
                 <!-- Заголовок -->
-                <TextBlock Text="Статистика жалоб"
+                <TextBlock Text="Статистика пожеланий"
                        FontSize="28"
                        FontWeight="SemiBold"
                        Foreground="#5D6572"

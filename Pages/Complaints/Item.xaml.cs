@@ -155,7 +155,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
             if (((FrameworkElement)sender).DataContext is Models.Complaints complaintToDelete)
             {
                 var confirmResult = MessageBox.Show(
-                    $"Вы уверены, что хотите удалить жалобу №{complaintToDelete.ComplaintId}?",
+                    $"Вы уверены, что хотите удалить пожелание №{complaintToDelete.ComplaintId}?",
                     "Подтверждение удаления",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
@@ -175,7 +175,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
                                 deleteContext.SaveChanges();
                                 LoadComplaints();
                                 MessageBox.Show(
-                                    $"Жалоба №{complaintToDelete.ComplaintId} успешно удалена.",
+                                    $"Пожелание №{complaintToDelete.ComplaintId} успешно удалена.",
                                     "Успех",
                                     MessageBoxButton.OK,
                                     MessageBoxImage.Information);
@@ -185,7 +185,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
                     catch (Exception ex)
                     {
                         MessageBox.Show(
-                            $"Ошибка при удалении жалобы: {ex.Message}",
+                            $"Ошибка при удалении пожелания: {ex.Message}",
                             "Ошибка",
                             MessageBoxButton.OK,
                             MessageBoxImage.Error);

@@ -128,7 +128,7 @@ namespace DormitoryPATDesktop.Pages.RepairRequests
         {
             if (!telegramId.HasValue)
             {
-                return; // Exit if no Telegram ID is provided
+                return;
             }
 
             try

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DormitoryPATDesktop"
         mc:Ignorable="d"
-        Title="Общежитие ПАТ" WindowState="Maximized" MinHeight="550" MinWidth="1100">
+        Title="Общежитие ПАТ" WindowState="Maximized" MinHeight="650" MinWidth="1200">
     <Grid>
         <Frame x:Name="frame" NavigationUIVisibility="Hidden"/>
     </Grid>

@@ -20,7 +20,7 @@
             <!-- Панель фильтров -->
             <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="10" BorderBrush="#E0E0E0" BorderThickness="1" Margin="0,0,0,5">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Border CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Width="220">
+                    <Border CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Width="200">
                         <TextBox x:Name="txtRoomFilter" 
                              TextChanged="Filter_Changed"
                              Padding="8"
@@ -44,7 +44,7 @@
                         </TextBox>
                     </Border>                    
 
-                    <Border CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Width="160" Margin="10,0,0,0">
+                    <Border CornerRadius="5" BorderBrush="#B0B0B0" BorderThickness="1" Width="140" Margin="10,0,0,0">
                         <DatePicker x:Name="dpDateFilter" 
                                 SelectedDateChanged="Filter_Changed" 
                                 Padding="8" 
@@ -62,7 +62,7 @@
                     </Border>
 
                     <ComboBox x:Name="cmbFloorFilter" 
-      Width="140" 
+      Width="120" 
       Margin="10,0,0,0"
       SelectionChanged="Filter_Changed"
       FontSize="14"
@@ -120,7 +120,7 @@
                     </ComboBox>
 
                     <ComboBox x:Name="cmbMonthFilter" 
-                          Width="140" 
+                          Width="120" 
                           Margin="10,0,0,0"
                           SelectionChanged="Filter_Changed"
                           FontSize="14"

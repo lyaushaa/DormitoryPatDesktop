@@ -18,7 +18,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
         private static readonly string BotToken = "7681929292:AAELFhLTiH3c4KZtnRrPY9aGD6gYyLWVo5E"; // Replace with your bot token
         private static readonly TelegramBotClient _telegramClient = new TelegramBotClient(BotToken);
 
-        public string TitleName => _isNewComplaint ? "Добавление новой жалобы или пожелания" : "Редактирование пожелания или жалобы";
+        public string TitleName => _isNewComplaint ? "Добавление нового пожелания" : "Редактирование пожелания";
 
         public Add(Models.Complaints complaint)
         {
@@ -114,7 +114,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
 
             try
             {
-                var message = $"🔔 Статус вашего пожелания или жалобы изменён на {newStatus}.\nТекст пожелания или жалобы: {complaintText}";
+                var message = $"🔔 Статус вашего пожелания изменён на {newStatus}.\nТекст пожелания: {complaintText}";
                 if (!string.IsNullOrEmpty(comment))
                 {
                     message += $"\nКомментарий: {comment}";
@@ -171,7 +171,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
 
                         if (complaintToSave == null)
                         {
-                            MessageBox.Show("Жалоба не найдена в базе данных.", "Ошибка",
+                            MessageBox.Show("Пожелание не найдена в базе данных.", "Ошибка",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                             return;
                         }
@@ -223,7 +223,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
                     context.SaveChanges();
 
                     MessageBox.Show(_isNewComplaint ?
-                        "Жалоба успешно создана." : "Изменения успешно сохранены.",
+                        "Пожелание успешно создано." : "Изменения успешно сохранены.",
                         "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
                     var mainPage = new Main();
@@ -243,7 +243,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
         {
             if (string.IsNullOrWhiteSpace(txtComplaintText.Text))
             {
-                MessageBox.Show("Введите текст жалобы.", "Ошибка",
+                MessageBox.Show("Введите текст пожелания.", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
@@ -266,7 +266,7 @@ namespace DormitoryPATDesktop.Pages.Complaints
 
             if (cmbStatus.SelectedItem == null)
             {
-                MessageBox.Show("Выберите статус жалобы.", "Ошибка",
+                MessageBox.Show("Выберите статус пожелания.", "Ошибка",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }

@@ -209,7 +209,7 @@
                       BorderBrush="#E0E0E0"
                       BorderThickness="1"
                       GridLinesVisibility="None"
-                      RowHeight="40"
+                      MinRowHeight="40"
                       FontSize="14"
                       MouseDoubleClick="StudentsDataGrid_MouseDoubleClick">
                 <DataGrid.Resources>
@@ -254,7 +254,8 @@
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="ФИО" 
                                        Binding="{Binding FIO}" 
-                                       Width="*">
+                                       Width="*"
+                                       MinWidth="120">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextAlignment" Value="Left"/>
@@ -309,7 +310,8 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Роль" 
-                                       Binding="{Binding StudentsRoleDisplay}" 
+                                       Binding="{Binding StudentsRoleDisplay}"
+                                       MinWidth="130"
                                        Width="180">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
